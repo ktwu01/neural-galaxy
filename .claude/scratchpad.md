@@ -176,15 +176,28 @@
 
 ## Project Status Board
 
-**Current Phase:** Phase 1B Complete - Testing Galaxy Visualization
+**Current Phase:** Phase 1D Partially Complete - Enhanced UX & Controls
 
-### To Do (Pending)
-- [ ] Test galaxy rendering with 488 particles
-- [ ] Verify FPS performance
-- [ ] Add particle click interaction (Phase 1C)
+### To Do (Pending) - Phase 1D: Enhanced UX & Controls (Remaining)
+- [ ] 1D.6: Tighten clustering (reduce inter-cluster separation in UMAP)
+- [ ] 1D.7: Increase particle separation (increase min_dist in UMAP)
+- [ ] 1D.8: Create right-side control panel UI
+- [ ] 1D.9: Add rotation speed slider to control panel
+- [ ] 1D.10: Add cluster tightness slider to control panel (triggers rebuild)
+- [ ] 1D.11: Add particle separation slider to control panel (triggers rebuild)
 
 ### In Progress
-- Awaiting user verification of galaxy visualization
+- None
+
+### Completed - Phase 1D (Auto-Focus & Highlight)
+- [x] 1D.1: Slow down auto-rotation speed (reduced to 0.005 from 0.05)
+- [x] 1D.2: Implement auto-focus system (raycasting from screen center)
+- [x] 1D.3: Add focus highlight (pulsing ring with transparent background)
+- [x] 1D.4: Create focus info panel at top-middle (FocusPanel component)
+- [x] 1D.5: Ensure focus only changes on camera movement (position tracking)
+- [x] 1D.3.1: Fix ring position synchronization with particle rotation
+- [x] 1D.3.2: Change shortcut from 'O' to 'K' for opening HUD
+- [x] 1D.3.3: Fix ring transparency (alpha channel + alphaTest)
 
 ### Completed - Phase 0
 - [x] 0.1: Initialize React + Vite + R3F project
@@ -204,14 +217,20 @@
 - [x] 1B.3: Add OrbitControls for navigation
 - [x] 1B.4: Galaxy component with 488 particles deployed
 
+### Completed - Phase 1C (Click Interaction)
+- [x] 1C.1: Implement raycasting for particle selection
+- [x] 1C.2: Create HUD overlay component with glassmorphic design
+- [x] 1C.3: Add click handler and state management
+- [x] 1C.4: ESC key support to close HUD
+
 ### Blocked/Questions
 - None yet
 
 ## Current Status / Progress Tracking
 
-**Last Updated:** 2025-11-24 17:22 (Phase 1A & 1B Complete)
+**Last Updated:** 2025-11-25 (Phase 1D Auto-Focus & Highlight Complete - Ready to Commit)
 
-**Current Task:** User verification of galaxy visualization at http://localhost:5173
+**Current Task:** Ready to commit Phase 1D progress and continue with remaining tasks
 
 **Completed Milestones:**
 
@@ -234,9 +253,25 @@
 - Stats overlay for FPS monitoring
 - Auto-rotation animation active
 
+✅ **Phase 1C Complete:** Click interaction and HUD overlay
+- Raycasting for particle selection
+- ParticleHUD component with glassmorphic design
+- Click handler and state management
+- ESC key support to close HUD
+
+✅ **Phase 1D (Partial) Complete:** Auto-focus system and highlight ring
+- Slowed auto-rotation to 0.005 (10x slower)
+- Auto-focus detection using raycaster from screen center
+- FocusHighlight component with pulsing ring
+- FocusPanel component showing focused particle info at top-middle
+- Focus only updates on camera movement (not rotation)
+- Ring position synchronized with particle rotation
+- Changed shortcut from 'O' to 'K' for better UX
+- Fixed ring transparency issue (alpha channel + alphaTest)
+
 **Next Steps:**
-- User to verify galaxy rendering and FPS performance
-- If successful: Proceed to Phase 1C (click interaction + HUD overlay)
+- Commit current progress
+- Continue with Phase 1D remaining tasks (control panel UI + UMAP parameter adjustments)
 
 ## Executor's Feedback or Assistance Requests
 
@@ -252,6 +287,35 @@
 - None yet (will populate as implementation progresses)
 
 ## Lessons Learned
+
+### Canvas Texture Transparency Issue (2025-11-25)
+
+**Problem:** Focus ring was blocking particles behind it, appearing as an opaque rectangle even though `transparent: true` was set on the SpriteMaterial.
+
+**Root Cause:** Canvas elements have a default opaque background. When creating a CanvasTexture in Three.js, the canvas background (typically white or black) gets rendered as part of the texture, creating a rectangular "layer" that occludes objects behind it.
+
+**Solution:** Call `ctx.clearRect(0, 0, width, height)` BEFORE drawing any shapes on the canvas. This clears the canvas to fully transparent (alpha = 0), so only the drawn shapes (the ring) are visible.
+
+**Code Fix:**
+```javascript
+// Enable alpha channel when creating context
+const ctx = canvas.getContext('2d', { alpha: true })
+ctx.clearRect(0, 0, 128, 128)  // Clear to transparent first
+// ... then draw ring shapes
+
+// In SpriteMaterial:
+transparent={true}
+alphaTest={0.01}  // Discard pixels with alpha < 0.01
+depthWrite={false}  // Don't write to depth buffer
+blending={THREE.AdditiveBlending}
+```
+
+**Key Lesson:** When creating custom textures with HTML Canvas for Three.js materials:
+1. Create context with `{ alpha: true }` option to enable alpha channel
+2. Always clear canvas to transparent first: `ctx.clearRect()`
+3. Use `alphaTest` to discard fully transparent pixels (prevents black rectangles)
+4. Set `depthWrite={false}` to prevent z-buffer issues with transparency
+5. The `transparent: true` material property only respects alpha channel in the texture
 
 ### Data Format Documentation
 
