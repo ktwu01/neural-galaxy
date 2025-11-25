@@ -7,6 +7,7 @@ import { FocusPanel } from './FocusPanel'
 import { ControlPanel } from './ControlPanel'
 import { GestureController } from './GestureController'
 import { DebugHandOverlay } from './DebugHandOverlay'
+import { HandCursor } from './HandCursor'
 import './App.css'
 
 function App() {
@@ -17,6 +18,15 @@ function App() {
   
   // Debug State for Gesture Mode
   const [debugData, setDebugData] = useState({ landmarks: null, gesture: null, status: null })
+  
+  // Galaxy rotation controlled by gestures
+  const [galaxyRotation, setGalaxyRotation] = useState({ x: 0, y: 0 })
+  
+  // Hand UI state
+  const [handsUI, setHandsUI] = useState({
+    left: { visible: false, position: null, gesture: 'IDLE' },
+    right: { visible: false, position: null, gesture: 'IDLE' }
+  })
 
 
 
@@ -55,11 +65,17 @@ function App() {
           onFocusChange={setFocusedParticle}
           focusedParticle={focusedParticle}
           rotationSpeed={rotationSpeed}
+          isGestureMode={isGestureMode}
+          galaxyRotation={galaxyRotation}
         />
 
         {/* Camera controls - Switch between Orbit and Gesture */}
         {isGestureMode ? (
-           <GestureController onDebugData={setDebugData} />
+           <GestureController 
+             onDebugData={setDebugData}
+             onGalaxyRotationChange={setGalaxyRotation}
+             onHandsUpdate={setHandsUI}
+           />
         ) : (
           <OrbitControls
             enableDamping
@@ -116,6 +132,34 @@ function App() {
         isGestureMode={isGestureMode}
         onToggleGestureMode={() => setIsGestureMode(!isGestureMode)}
       />
+
+      {/* Debug Overlay for Gesture Mode */}
+      {isGestureMode && (
+          <DebugHandOverlay 
+            leftHand={debugData.leftHand}
+            rightHand={debugData.rightHand}
+            status={debugData.status}
+            gesture={debugData.gesture}
+          />
+      )}
+
+      {/* Hand Cursors (Visual Feedback) */}
+      {isGestureMode && (
+        <>
+          <HandCursor 
+            hand="left"
+            position={handsUI.left.position}
+            gesture={handsUI.left.gesture}
+            visible={handsUI.left.visible}
+          />
+          <HandCursor 
+            hand="right"
+            position={handsUI.right.position}
+            gesture={handsUI.right.gesture}
+            visible={handsUI.right.visible}
+          />
+        </>
+      )}
     </div>
   )
 }

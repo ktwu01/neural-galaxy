@@ -4,6 +4,8 @@
 
 - [ ] There is even no need to have a rotation center. Because a rotation center will let us always have to rotate instead of moving horizontally or vertically. This makes moving here and there to be very super hard.
 
+- [ ] In the top right, add a back panel to see the location we are at the Galaxy. Just like what GTA does In 2D map, here is 3D (Projected to 2D).
+
 - [ ] Also change the behavior to where we can only use Cursor and use the mouse if we push the mouse, it will go straight towards the cursor direction. That is, we do not need to zoom in or zoom out using our fingers. This is super super not good practice. It's not like Traveler because travelers they travel like using a speed but if you zoom in zoom out this is like God that's not acceptable. And also, it is too easy for me to accidentally click on one of the particles, and it just stops. Try not to let it stop so quickly. I would like to see the focus panel first. Let the user click twice before showing up the detailed information.This can avoid accidentally clicking.
 
 ## Middle

@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { FocusHighlight } from './FocusHighlight'
 
-export function Galaxy({ onParticleClick, onFocusChange, focusedParticle, rotationSpeed = 0.005 }) {
+export function Galaxy({ onParticleClick, onFocusChange, focusedParticle, rotationSpeed = 0.005, isGestureMode = false, galaxyRotation = { x: 0, y: 0 } }) {
   const [galaxyData, setGalaxyData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -156,7 +156,14 @@ export function Galaxy({ onParticleClick, onFocusChange, focusedParticle, rotati
   // Gentle rotation animation (controllable speed) + Auto-focus detection
   useFrame((state) => {
     if (pointsRef.current) {
-      pointsRef.current.rotation.y = state.clock.getElapsedTime() * rotationSpeed
+      if (isGestureMode) {
+        // In gesture mode: apply manual rotation from gestures
+        pointsRef.current.rotation.x = galaxyRotation.x;
+        pointsRef.current.rotation.y = galaxyRotation.y;
+      } else {
+        // In orbit mode: auto-rotate
+        pointsRef.current.rotation.y = state.clock.getElapsedTime() * rotationSpeed;
+      }
     }
 
     // Auto-focus: detect particle closest to screen center (only when camera moves)
@@ -174,14 +181,44 @@ export function Galaxy({ onParticleClick, onFocusChange, focusedParticle, rotati
       if (cameraHasMoved || time < 1) {
         lastCameraPosition.current.copy(camera.position)
 
-        // Raycast from screen center (0, 0)
-        raycaster.current.setFromCamera(new THREE.Vector2(0, 0), camera)
-        const intersects = raycaster.current.intersectObject(pointsRef.current)
+        // Find the particle closest to screen center (not just first hit)
+        // This allows focusing on interior particles, not just the outer shell
+        
+        let closestParticle = null
+        let closestScreenDistance = Infinity
+        
+        // Project all particles to screen space and find the one closest to center
+        const screenCenter = new THREE.Vector2(0, 0)
+        const tempVec = new THREE.Vector3()
+        const screenPos = new THREE.Vector2()
+        
+        for (let i = 0; i < galaxyData.length; i++) {
+          // Get particle position in world space
+          tempVec.set(galaxyData[i].x, galaxyData[i].y, galaxyData[i].z)
+          
+          // Transform to camera space to check if in front
+          const particleInCameraSpace = tempVec.clone().applyMatrix4(camera.matrixWorldInverse)
+          
+          // Skip particles behind the camera
+          if (particleInCameraSpace.z >= 0) continue
+          
+          // Project to screen space (normalized device coordinates)
+          tempVec.project(camera)
+          screenPos.set(tempVec.x, tempVec.y)
+          
+          // Calculate distance from screen center
+          const distanceFromCenter = screenPos.distanceTo(screenCenter)
+          
+          // Only consider particles close to center (within a reasonable threshold)
+          // This creates a "focus cone" rather than checking the entire screen
+          if (distanceFromCenter < 0.1 && distanceFromCenter < closestScreenDistance) {
+            closestScreenDistance = distanceFromCenter
+            closestParticle = galaxyData[i]
+          }
+        }
 
-        if (intersects.length > 0) {
-          const focusedIndex = intersects[0].index
-          const focusedParticle = galaxyData[focusedIndex]
-          onFocusChange(focusedParticle)
+        if (closestParticle) {
+          onFocusChange(closestParticle)
         } else {
           // Fallback: if raycast fails, find closest particle to screen center in 3D space
           const centerPoint = new THREE.Vector3(0, 0, 0)
