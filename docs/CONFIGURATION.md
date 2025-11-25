@@ -12,6 +12,16 @@ Galaxy. Some helper scripts may follow a naming pattern such as
 `upload_xx.py` instead of `import_xx.py`—treat them interchangeably and
 focus on the context the script describes.
 
+## Sample Data
+
+For demos and tests we ship a friendly dataset at `frontend/public/galaxy_data.json`.
+It’s generated with `scripts/generate_sample_galaxy.py`, which creates 488
+synthetic points using curated prompts (topics, reflections, next actions).
+Each run uses seeded randomness to produce safe, motivational text plus
+coordinates within the same bounds as the real pipeline. If you want a fresh
+sample, edit the script (topics, colors, seed) and rerun it before starting
+the Vite dev server.
+
 ## Configuration Files
 
 ### 1. `scripts/config.py` - Backend Build Parameters

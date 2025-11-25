@@ -121,8 +121,9 @@ dist
 # Personal Files
 data/
 data/*.json
-frontend/public/galaxy_data.json
-*.json
+
+# *.json
 
 # Reference Repos (Don't commit other people's code)
 jarvis-ref/
+frontend/public/galaxy_data_full.json

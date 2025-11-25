@@ -1,6 +1,6 @@
 ## Critical
 
-使用新的测试对话内容而非我自己的内容.
+
 
 Deploy to Amazon. 如果数量超过fifty MB的话，需要by me coffee any amount
 
@@ -80,3 +80,5 @@ Oh what the fucking shit. It's definitely stupid retard to use emojis as icons. 
     - [x] Test end-to-end import workflow with sample data
 
 - [x] data points大小由该points的words量决定
+
+- [x] 使用新的测试对话内容而非我自己的内容.
