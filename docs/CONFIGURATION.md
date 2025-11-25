@@ -4,6 +4,14 @@
 
 The Neural Galaxy project uses **centralized configuration** to manage parameters. This makes it easy to tune the visualization without hunting through code.
 
+## Terminology: Import = Upload
+
+Throughout the docs and scripts you'll see both **import** and **upload**.
+They refer to the same workflow: bringing external chat data into Neural
+Galaxy. Some helper scripts may follow a naming pattern such as
+`upload_xx.py` instead of `import_xx.py`—treat them interchangeably and
+focus on the context the script describes.
+
 ## Configuration Files
 
 ### 1. `scripts/config.py` - Backend Build Parameters
@@ -156,8 +164,8 @@ The app now uses **hand gesture control** as the primary navigation method:
 - Control panel (right) for real-time adjustments
 
 **Default Settings:**
+Ref to `config.py` `config.js`
 - Direction control: Enabled
 - Two-hand rotation: Disabled (toggle available)
-- Fly speed: 90 units/sec (adjustable 10-200)
-- Boundary: 300 units (adjustable 100-1000)
-
+- Fly speed: xx units/sec (adjustable xx-xx)
+- Boundary: xx units (adjustable xx-xx)

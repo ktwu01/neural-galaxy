@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import { Galaxy } from './Galaxy'
@@ -10,8 +10,9 @@ import { HandCursor } from './HandCursor'
 import { GestureInfoPanel } from './GestureInfoPanel'
 import Minimap, { MinimapUpdater } from './Minimap'
 import { GESTURE_CONFIG, CAMERA_CONFIG } from './config'
-import { FaStar, FaCodeBranch, FaLinkedin, FaTwitter, FaGithub, FaKeyboard, FaDownload } from 'react-icons/fa' // Changed FaUpload to FaDownload
+import { FaStar, FaCodeBranch, FaLinkedin, FaTwitter, FaGithub, FaKeyboard, FaDownload, FaCamera } from 'react-icons/fa' // Changed FaUpload to FaDownload
 import SetupGuide from './components/SetupGuide/SetupGuide' // Import SetupGuide
+import loadHtml2Canvas from './utils/loadHtml2Canvas'
 import './App.css'
 
 // Keyboard Help Panel Component
@@ -74,6 +75,10 @@ function KeyboardHelpPanel({ onClose }) {
           <kbd style={{ background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>I</kbd>
           <span style={{ flex: 1, marginLeft: '16px' }}>Open import/setup guide</span>
         </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '8px' }}>
+          <kbd style={{ background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>S</kbd>
+          <span style={{ flex: 1, marginLeft: '16px' }}>Capture full-screen screenshot</span>
+        </div>
       </div>
 
       <button
@@ -130,6 +135,9 @@ function App() {
     left: { visible: false, position: null, gesture: 'IDLE' },
     right: { visible: false, position: null, gesture: 'IDLE' }
   })
+  const [isCapturingScreenshot, setIsCapturingScreenshot] = useState(false)
+  const [screenshotMessage, setScreenshotMessage] = useState('')
+  const [screenshotCountdown, setScreenshotCountdown] = useState(null)
 
   const galaxyRef = useRef();
   const minimapCanvasRef = useRef();
@@ -150,77 +158,110 @@ function App() {
       setShowSetupGuide(true);
     }
   }, []);
+  useEffect(() => {
+    if (!screenshotMessage) return
+    const timeout = setTimeout(() => setScreenshotMessage(''), 4000)
+    return () => clearTimeout(timeout)
+  }, [screenshotMessage])
 
   const processImportedData = (data) => {
     console.log('[App.jsx] Step 1: Starting data processing for imported file...');
 
-    if (!Array.isArray(data) || data.length === 0) {
-      console.error('[App.jsx] Imported data is not a valid array or is empty.');
+    // Helper function to robustly extract text from different possible data structures
+    function getTextFromRecord(record, visited = new Set()) {
+      if (!record || typeof record !== 'object' || visited.has(record)) {
+        return null; // We can only process objects, and we must avoid circular references
+      }
+      visited.add(record);
+
+      // 1. New "mapping" format (from user feedback)
+      if (record.mapping && typeof record.mapping === 'object') {
+        // Find the first message with actual text content in the mapping.
+        for (const node of Object.values(record.mapping)) {
+          if (node && node.message && node.message.content && node.message.content.parts) {
+            const textPart = node.message.content.parts.find(p => typeof p === 'string' && p.trim() !== '');
+            if (textPart) {
+              return textPart;
+            }
+          }
+        }
+      }
+
+      // 2. Direct `text` property (like in our default galaxy_data.json)
+      if (typeof record.text === 'string' && record.text.trim()) {
+        return record.text;
+      }
+
+      // 3. ChatGPT-like structure at the top level
+      if (record.message && record.message.content && record.message.content.parts) {
+        const textParts = record.message.content.parts.filter(p => typeof p === 'string' && p.trim() !== '');
+        if (textParts.length > 0) {
+          return textParts.join('\n\n');
+        }
+      }
+
+      // 4. Handle nested single-key object format, e.g. { "uuid-xyz": {...} }
+      const keys = Object.keys(record);
+      if (keys.length === 1 && typeof record[keys[0]] === 'object' && record[keys[0]] !== null) {
+        return getTextFromRecord(record[keys[0]], visited); // Recurse
+      }
+      
+      // If no text could be extracted, return null
       return null;
     }
 
-    console.log(`[App.jsx] Step 2: Found ${data.length} records in the imported file.`);
+    let dataAsArray = [];
+    if (Array.isArray(data)) {
+      dataAsArray = data;
+    } else if (typeof data === 'object' && data !== null) {
+      dataAsArray = Object.values(data);
+    }
+    
+    dataAsArray = dataAsArray.filter(item => item && typeof item === 'object');
 
-    // A very simple placeholder pre-processing pipeline
-    const processedData = data.map((item, index) => {
-      let displayContent = '';
-      const rawContent = item.text || item.content || (item.conversation && item.conversation.text) || JSON.stringify(item);
+    if (dataAsArray.length === 0) {
+      console.error('[App.jsx] Imported data is not a valid array or is empty after filtering.');
+      return null;
+    }
 
-      try {
-        const parsedContent = JSON.parse(rawContent);
-        // Attempt to find a suitable text field within the parsed JSON
-        if (parsedContent.message && typeof parsedContent.message === 'string') {
-          displayContent = parsedContent.message;
-        } else if (parsedContent.response && typeof parsedContent.response === 'string') {
-          displayContent = parsedContent.response;
-        } else if (Array.isArray(parsedContent) && parsedContent.length > 0) {
-          // Look for content in an array, e.g., ChatGPT's message structure
-          const firstMessage = parsedContent.find(msg => msg.content && typeof msg.content === 'string');
-          if (firstMessage) {
-              displayContent = firstMessage.content;
-          } else {
-              // Fallback for arrays, stringify and truncate
-              displayContent = JSON.stringify(parsedContent, null, 2);
-          }
-        } else if (typeof parsedContent === 'object' && Object.keys(parsedContent).length > 0) {
-          // If it's an object, try to find a general 'text' or 'content' field
-          displayContent = parsedContent.text || parsedContent.content || JSON.stringify(parsedContent, null, 2);
-        } else {
-          displayContent = rawContent; // Fallback if parsing didn't yield useful text
-        }
-      } catch (e) {
-        // Not a JSON string, or parsing failed, use as plain text
-        displayContent = rawContent;
+    console.log(`[App.jsx] Step 2: Found ${dataAsArray.length} records in the imported file.`);
+
+    const processedData = dataAsArray.map((item, index) => {
+      const text = getTextFromRecord(item);
+      
+      // If we couldn't extract text, we'll skip this record.
+      if (!text) {
+          return null; 
       }
 
-      // Truncate to a reasonable length for display
-      const maxLength = 200; // Define a max length for summary
-      if (displayContent.length > maxLength) {
-        displayContent = displayContent.substring(0, maxLength) + '...';
-      }
+      // Use the item's own title if available, otherwise generate one.
+      const title = item.title || `Imported Item ${index + 1}`;
+      const id = item.id || `imported-${index}`;
 
-      // Assign a random cluster/color for visual differentiation
-      const clusterId = Math.floor(Math.random() * 5); // 5 random clusters
+      const clusterId = Math.floor(Math.random() * 5);
       const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'];
-
-      // Generate random positions for a simple spherical distribution
-      const radius = 100 + Math.random() * 50; // Place them in a shell
+      const radius = 100 + Math.random() * 50;
       const phi = Math.acos(2 * Math.random() - 1);
       const theta = Math.random() * 2 * Math.PI;
 
       return {
-        id: item.id || `imported-${index}`,
-        title: item.title || `Imported Item ${index + 1}`,
-        text: displayContent, // Use the processed content
+        id: id,
+        title: title,
+        text: text,
         cluster: clusterId,
         color: colors[clusterId],
         x: radius * Math.cos(theta) * Math.sin(phi),
         y: radius * Math.sin(theta) * Math.sin(phi),
         z: radius * Math.cos(phi),
       };
-    });
+    }).filter(item => item !== null); // Filter out the items we couldn't process
 
-    console.log('[App.jsx] Step 3: Finished processing data. Sample of first item:', processedData[0]);
+    if (processedData.length === 0) {
+      console.error('[App.jsx] No processable records found in the imported file.');
+      return null;
+    }
+
+    console.log(`[App.jsx] Step 3: Finished processing data. Sample of first item:`, processedData[0]);
     console.log(`[App.jsx] Step 4: Total processed points: ${processedData.length}`);
 
     return processedData;
@@ -240,6 +281,81 @@ function App() {
     localStorage.setItem('neuralGalaxy_setupComplete', 'true');
     setShowSetupGuide(false);
   };
+  const performScreenshotCapture = useCallback(async () => {
+    if (isCapturingScreenshot) return
+
+    try {
+      setIsCapturingScreenshot(true)
+      setScreenshotMessage('Rendering screenshot...')
+
+      const html2canvas = await loadHtml2Canvas()
+      const target = document.body
+
+      if (!html2canvas || !target) {
+        throw new Error('html2canvas failed to initialize or target unavailable')
+      }
+
+      const canvas = await html2canvas(target, {
+        backgroundColor: '#000000',
+        useCORS: true,
+        logging: false,
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: document.documentElement.scrollHeight,
+        onclone: (doc) => {
+          doc.documentElement.scrollTop = 0
+        }
+      })
+
+      await new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            reject(new Error('html2canvas returned empty blob'))
+            return
+          }
+          const downloadName = `neural-galaxy-${new Date().toISOString().replace(/[:.]/g, '-')}.png`
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = downloadName
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+          resolve()
+        }, 'image/png')
+      })
+
+      setScreenshotMessage('Screenshot saved to your downloads.')
+    } catch (error) {
+      console.error('[Screenshot] Failed to capture UI', error)
+      setScreenshotMessage('Unable to capture screenshot. Check console for details.')
+    } finally {
+      setIsCapturingScreenshot(false)
+    }
+  }, [isCapturingScreenshot]);
+
+  useEffect(() => {
+    if (screenshotCountdown === null) return
+
+    if (screenshotCountdown > 0) {
+      setScreenshotMessage(`Screenshot in ${screenshotCountdown}...`)
+      const timer = setTimeout(() => {
+        setScreenshotCountdown(prev => (prev !== null ? prev - 1 : null))
+      }, 1000)
+      return () => clearTimeout(timer)
+    }
+
+    if (screenshotCountdown === 0) {
+      setScreenshotCountdown(null)
+      performScreenshotCapture()
+    }
+  }, [screenshotCountdown, performScreenshotCapture])
+
+  const handleScreenshot = useCallback(() => {
+    if (isCapturingScreenshot || screenshotCountdown !== null) return
+    setScreenshotCountdown(3)
+    setScreenshotMessage('Screenshot in 3...')
+  }, [isCapturingScreenshot, screenshotCountdown]);
 
 
   // Handle keyboard shortcuts
@@ -278,11 +394,15 @@ function App() {
       if (e.key === 'i' || e.key === 'I') {
         setShowSetupGuide(!showSetupGuide) // Now opens setup guide
       }
+      // S: Capture screenshot
+      if (e.key === 's' || e.key === 'S') {
+        handleScreenshot()
+      }
     }
 
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [selectedParticle, focusedParticle, showKeyboardHelp, isGestureMode, showSetupGuide]) // Added showSetupGuide to dependency array
+  }, [selectedParticle, focusedParticle, showKeyboardHelp, isGestureMode, showSetupGuide, handleScreenshot]) // Added showSetupGuide to dependency array
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#000' }} role="application" aria-label="Neural Galaxy 3D Visualization">
@@ -290,7 +410,11 @@ function App() {
         <SetupGuide onSetupComplete={handleSetupComplete} />
       ) : (
         <>
-          <Canvas camera={{ position: [0, 0, 200], fov: 60 }}>
+          <Canvas
+            className="galaxy-canvas"
+            gl={{ preserveDrawingBuffer: true }}
+            camera={{ position: [0, 0, 200], fov: 60 }}
+          >
             {/* Deep space background */}
             <color attach="background" args={['#000000']} />
 
@@ -526,6 +650,45 @@ function App() {
               Import (I)
             </button>
 
+            {/* Screenshot Button */}
+            <button
+              onClick={handleScreenshot}
+              aria-label="Save a screenshot of the current galaxy view"
+              disabled={isCapturingScreenshot || screenshotCountdown !== null}
+              style={{
+                background: 'rgba(0, 255, 153, 0.2)',
+                border: '2px solid #00ff99',
+                borderRadius: '8px',
+                padding: '10px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#00ffcc',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                fontFamily: 'monospace',
+                cursor: (isCapturingScreenshot || screenshotCountdown !== null) ? 'wait' : 'pointer',
+                transition: 'all 0.3s ease',
+                backdropFilter: 'blur(5px)',
+                whiteSpace: 'nowrap',
+                opacity: (isCapturingScreenshot || screenshotCountdown !== null) ? 0.6 : 1,
+              }}
+              onMouseEnter={(e) => {
+                if (isCapturingScreenshot || screenshotCountdown !== null) return
+                e.target.style.background = 'rgba(0, 255, 153, 0.4)'
+                e.target.style.transform = 'scale(1.05)'
+              }}
+              onMouseLeave={(e) => {
+                if (isCapturingScreenshot || screenshotCountdown !== null) return
+                e.target.style.background = 'rgba(0, 255, 153, 0.2)'
+                e.target.style.transform = 'scale(1)'
+              }}
+            >
+              <FaCamera style={{ fontSize: '16px' }} />
+              {isCapturingScreenshot ? 'Saving...' : 'Screenshot (S)'}
+            </button>
+
             {/* Help Button */}
             <button
               onClick={() => setShowKeyboardHelp(!showKeyboardHelp)}
@@ -560,7 +723,60 @@ function App() {
               <FaKeyboard style={{ fontSize: '16px' }} />
               Help (H)
             </button>
+            <div
+              aria-live="polite"
+              role="status"
+              style={{
+                marginTop: '4px',
+                fontSize: '12px',
+                color: '#e8fff9',
+                fontFamily: 'monospace',
+                textAlign: 'right',
+                minHeight: '18px',
+              }}
+            >
+              {screenshotMessage}
+            </div>
+            <div
+              style={{
+                fontSize: '12px',
+                color: '#b3fff0',
+                fontFamily: 'monospace',
+                textAlign: 'right',
+                lineHeight: 1.4,
+              }}
+            >
+              Copyright 2025 by{' '}
+              <a
+                href="https://github.com/ktwu01/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: '#00ffff', textDecoration: 'none' }}
+              >
+                Koutian Wu
+              </a>.
+            </div>
           </div>
+          {screenshotCountdown !== null && screenshotCountdown > 0 && (
+            <div
+              style={{
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                color: '#00ffcc',
+                fontSize: '64px',
+                fontFamily: 'monospace',
+                fontWeight: 'bold',
+                textShadow: '0 0 20px rgba(0, 255, 204, 0.8)',
+                pointerEvents: 'none',
+                zIndex: 1500,
+              }}
+              aria-live="assertive"
+            >
+              {screenshotCountdown}
+            </div>
+          )}
         </>
       )}
     </div>

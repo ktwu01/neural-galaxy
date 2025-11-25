@@ -1,30 +1,26 @@
 ## Critical
 
-Then we should follow the best practice in @jarvis.
+data points大小由该points的words量决定
 
 ## Middle
+如果数量超过fifty MB的话，需要by me coffee any amount
 
-- [x] Add import bottom and preprocess part via browser/connect seamlessly
-    - [x] Design UI for file upload/import button
-    - [x] Implement file reader for chat history formats (JSON only)
-            with description on how to export ?
-    - [x] Add data validation and error handling for imported files
-    - [x] Implement preprocessing pipeline (tokenization, embedding generation) - *Implemented basic text summarization and random positioning. Full UMAP/clustering is a future task.*
-    - [ ] Add progress indicator for import/preprocessing workflow
-    - [ ] Update @CONFIGURATION.md to know that upload = import in our context. And sometimes, the scripts can be named as `upload_xx` instead of `import_xx`.
-    - [x] Update galaxy data structure to accept dynamically imported data
-    - [ ] Test end-to-end import workflow with sample data
+使用新的测试对话内容而非我自己的内容
 
 - [ ] As many of the users, they might have like 100 conversations, so this such low number might not be very suitable for creating a nebula or a galaxy. So how about   change our method of considering like ungroup our conversation instead we make a   large word galaxy instead of conversation galaxy. Like each word has its own   particle.
 
 ## Small
-- [ ] Each individual particle should be more separated spatially. We should have a control panel in the right To control this parameter\(if its techinally easy)
 
-- [ ]   Different color clusters should be less separated spatially. We should have a control panel in a right to control this parameter.(... if it's easy.)
+- [ ] 让cluster之间离得更远一些，现在的3倍. Different color clusters should be more separated spatially. We should have a control panel in a right to control this parameter.(... if it's easy.)
 
-- [ ] left right hand flipped (text shown good; img need to be flipped. that is after img flip, the txt should also flip)
 
 ## Solved
+Then we should follow the best practice in @jarvis.
+
+- [x] Each individual particle should be more separated spatially. We should have a control panel in the right To control this parameter\(if its techinally easy)
+
+- [x] left right hand flipped (text shown good; img need to be flipped. that is after img flip, the txt should also flip)
+
 - [x] We should have the ability to unlimited zoom in and zoom out.
     - [x] Currently, it is limited to zoom in.
 
@@ -63,3 +59,19 @@ Oh what the fucking shit. It's definitely stupid retard to use emojis as icons. 
 - [x] Move GitHub repo Fork/Star links to be next to the "Neural Galaxy" title.
 - [x] Move social icons (LinkedIn, X, GitHub profile) to be next to the "Settings" toggle icon (outside the panel), and make them clickable.
 - [x] Set "Settings Panel" to be folded (closed) by default.
+
+- [x] `focus` Data show in the `focus` panel: It didn't pitch out the correct part of the JSON file that we really want. It just Cut off to get the first part of the Raw Json, this is ugly. Search for this algorithm and change it to Search for this part `"content": {"content_type": "text", "parts": ["` and get the information after this part (If it's not empty. I believe for each conversation we will have at least not empty after `"content": {"content_type": "text", "parts": ["`)
+
+- [x] Add a screenshot button add my name to below
+
+- [x] Add import bottom and preprocess part via browser/connect seamlessly
+    - [x] Design UI for file upload/import button
+    - [x] Implement file reader for chat history formats (JSON only)
+            with description on how to export ?
+    - [x] Add data validation and error handling for imported files
+    - [x] Implement preprocessing pipeline (tokenization, embedding generation) - *Implemented basic text summarization and random positioning. Full UMAP/clustering is a future task.*
+    - [x] Add progress indicator for import/preprocessing workflow
+
+    - [x] Update @CONFIGURATION.md to know that upload = import in our context. And sometimes, the scripts can be named as `upload_xx` instead of `import_xx`.
+    - [x] Update galaxy data structure to accept dynamically imported data
+    - [x] Test end-to-end import workflow with sample data
