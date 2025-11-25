@@ -23,10 +23,144 @@
 - [x] Camera movement with lerp smoothing
 - [x] Control mode toggle
 
-### Phase 2A-Polish: Gesture Control Refinement (PRIORITY)
+### Phase 2A-Polish: Gesture Control Refinement ✅ COMPLETE
 **Goal:** Make gesture control feel smooth, responsive, and intuitive
 
-#### **CRITICAL FIXES (Do First)**
+**Completed:**
+- ✅ Fixed React closure bug (props not updating in callbacks)
+- ✅ Intuitive direction control (hand position steers camera)
+- ✅ Reduced sensitivity for stability (30% center dead zone)
+- ✅ Both GRAB and PINCH move forward
+- ✅ Hand skeleton overlays (replaced circles)
+- ✅ Removed top-left debug panel
+- ✅ Added bottom-left gesture info panel with emoji guide
+- ✅ Centralized all config parameters
+- ✅ 2x larger boundary distance (300 units)
+- ✅ Direction control enabled by default
+
+### Phase 3: Minimap Implementation (CURRENT)
+**Goal:** GTA-style minimap in bottom-left corner showing camera position and galaxy overview
+
+#### Requirements (Keep It Simple):
+
+**Visual Design:**
+- Bottom-left corner, 180x180px square
+- Semi-transparent black background with cyan border (match theme)
+- Top-down 2D projection of the galaxy (bird's eye view)
+- Small colored dots for particles (cluster colors preserved)
+- Camera position as cyan triangle/arrow pointing in camera direction
+- No compass, no zoom, no interaction (static view for now)
+
+**Technical Approach:**
+1. Create `Minimap.jsx` component
+2. Use HTML5 Canvas for rendering (performance)
+3. Project 3D galaxy coordinates to 2D (X-Z plane, ignore Y)
+4. Scale coordinates to fit 180x180 canvas
+5. Update camera position/rotation every frame via `useFrame`
+6. Position above gesture info panel (with small gap)
+
+**Data Flow:**
+- Galaxy data already loaded in `Galaxy.jsx`
+- Pass galaxy data + camera ref to Minimap via props
+- Minimap subscribes to camera position/rotation in render loop
+
+**Success Criteria:**
+- ✅ Minimap visible in bottom-left corner
+- ✅ Shows all particles as small colored dots
+- ✅ Camera position clearly visible (moving dot/arrow)
+- ✅ Camera direction indicated (arrow rotation)
+- ✅ Minimal performance impact (<2ms per frame)
+
+#### High-Level Task Breakdown:
+
+**Task 1: Create Minimap Component** (~15 min)
+- Create `frontend/src/Minimap.jsx`
+- Basic canvas setup (180x180px)
+- Styled container (position, background, border)
+- Add to `App.jsx` (bottom-left, above gesture panel)
+
+**Task 2: Render Galaxy Overview** (~20 min)
+- Project 3D coordinates to 2D (X-Z plane)
+- Scale to fit canvas (find min/max bounds)
+- Draw particles as small colored dots (2-3px radius)
+- Draw boundary circle (show max distance)
+
+**Task 3: Render Camera Indicator** (~15 min)
+- Get camera position from Three.js camera ref
+- Project camera position to minimap coordinates
+- Draw camera as triangle/arrow (5-8px size)
+- Rotate triangle based on camera.rotation.y (yaw)
+
+**Task 4: Real-time Updates** (~10 min)
+- Use `useFrame` hook to update canvas every frame
+- Throttle updates if needed (30fps for minimap is fine)
+- Clear and redraw canvas efficiently
+
+**Task 5: Polish & Config** (~10 min)
+- Add to `config.js`: minimap size, colors, opacity
+- Adjust positioning to not overlap gesture panel
+- Test performance (should be negligible)
+
+**Total Estimated Time:** ~70 minutes (1 hour 10 min)
+
+#### Technical Notes:
+
+**Coordinate System:**
+- Galaxy uses 3D coordinates (x, y, z) in range ~[-25, +25]
+- Minimap shows top-down view: X-axis (horizontal), Z-axis (vertical)
+- Camera position also in 3D space
+- Need to map: 3D world → 2D minimap canvas
+
+**Performance Considerations:**
+- Canvas rendering is fast (can handle 488 particles easily)
+- Use `requestAnimationFrame` or `useFrame` (already 60fps)
+- Consider drawing particles once, only update camera position
+
+**Positioning Logic:**
+```
+Bottom-left corner:
+- Gesture Info Panel: bottom: 20px, left: 20px (existing)
+- Minimap: bottom: 130px, left: 20px (above gesture panel with gap)
+OR move gesture panel down and put minimap at bottom
+```
+
+**Canvas Coordinate Mapping:**
+```javascript
+// World bounds (assuming galaxy spans -25 to +25)
+const worldMin = -25, worldMax = 25
+const worldSize = worldMax - worldMin // 50
+
+// Map world X,Z to canvas x,y
+const canvasX = ((worldX - worldMin) / worldSize) * canvasWidth
+const canvasY = ((worldZ - worldMin) / worldSize) * canvasHeight
+```
+
+**Camera Arrow Drawing:**
+```javascript
+// Rotate triangle based on camera yaw
+ctx.save()
+ctx.translate(cameraCanvasX, cameraCanvasY)
+ctx.rotate(cameraYaw)
+// Draw triangle pointing up (0,0 is tip)
+ctx.fillStyle = '#00ffff'
+ctx.beginPath()
+ctx.moveTo(0, -5) // tip
+ctx.lineTo(-4, 5) // bottom left
+ctx.lineTo(4, 5)  // bottom right
+ctx.closePath()
+ctx.fill()
+ctx.restore()
+```
+
+#### Potential Enhancements (Phase 4, Not Now):
+- Click minimap to teleport camera
+- Zoom in/out on minimap
+- Show trail/path of where you've been
+- Fog of war (only show visited areas)
+- Particle labels on hover
+- Compass rose (N/S/E/W)
+
+**Decision:** Keep it simple for now. Static overview + camera position is sufficient.
 
 - [x] **Task 2A-P1: Fix Movement Speed**
   - Reduce forward speed to 1/10th current (5 units/sec instead of 50)
