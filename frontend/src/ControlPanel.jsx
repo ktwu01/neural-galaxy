@@ -1,7 +1,8 @@
 import { useState } from 'react'
 
-export function ControlPanel({ rotationSpeed, onRotationSpeedChange }) {
+export function ControlPanel({ rotationSpeed, onRotationSpeedChange, isGestureMode, onToggleGestureMode }) {
   const [isExpanded, setIsExpanded] = useState(false)
+
 
   return (
     <div style={{
@@ -85,6 +86,37 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange }) {
         }}>
           ⚙️ Controls
         </h3>
+
+        {/* Rotation Speed Slider */}
+        <div style={{ marginBottom: '25px' }}>
+          <label style={{
+            display: 'block',
+            fontSize: '12px',
+            marginBottom: '8px',
+            color: 'rgba(255, 255, 255, 0.7)',
+          }}>
+            Control Mode
+          </label>
+          <button
+            onClick={onToggleGestureMode}
+            style={{
+              width: '100%',
+              padding: '8px',
+              background: isGestureMode ? 'rgba(100, 255, 100, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+              border: isGestureMode ? '1px solid rgba(100, 255, 100, 0.5)' : '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '4px',
+              color: isGestureMode ? '#aaffaa' : 'white',
+              cursor: 'pointer',
+              fontSize: '12px',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            {isGestureMode ? '👋 Hands (Gesture)' : '🖱️ Mouse (Orbit)'}
+          </button>
+          <div style={{ fontSize: '10px', marginTop: '4px', color: 'rgba(255, 255, 255, 0.5)' }}>
+            {isGestureMode ? 'Move hands to fly & zoom' : 'Drag to rotate, scroll to zoom'}
+          </div>
+        </div>
 
         {/* Rotation Speed Slider */}
         <div style={{ marginBottom: '25px' }}>

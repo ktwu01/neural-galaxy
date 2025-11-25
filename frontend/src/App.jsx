@@ -5,12 +5,20 @@ import { Galaxy } from './Galaxy'
 import { ParticleHUD } from './ParticleHUD'
 import { FocusPanel } from './FocusPanel'
 import { ControlPanel } from './ControlPanel'
+import { GestureController } from './GestureController'
+import { DebugHandOverlay } from './DebugHandOverlay'
 import './App.css'
 
 function App() {
   const [selectedParticle, setSelectedParticle] = useState(null)
   const [focusedParticle, setFocusedParticle] = useState(null)
   const [rotationSpeed, setRotationSpeed] = useState(0.005)
+  const [isGestureMode, setIsGestureMode] = useState(true)
+  
+  // Debug State for Gesture Mode
+  const [debugData, setDebugData] = useState({ landmarks: null, gesture: null, status: null })
+
+
 
 
   // Handle keyboard shortcuts
@@ -49,16 +57,29 @@ function App() {
           rotationSpeed={rotationSpeed}
         />
 
-        {/* Camera controls */}
-        <OrbitControls
-          enableDamping
-          dampingFactor={0.05}
-          rotateSpeed={0.5}
-          zoomSpeed={0.8}
-          minDistance={50}
-          maxDistance={500}
-        />
+        {/* Camera controls - Switch between Orbit and Gesture */}
+        {isGestureMode ? (
+           <GestureController onDebugData={setDebugData} />
+        ) : (
+          <OrbitControls
+            enableDamping
+            dampingFactor={0.05}
+            rotateSpeed={0.5}
+            zoomSpeed={0.8}
+            minDistance={50}
+            maxDistance={500}
+          />
+        )}
       </Canvas>
+      
+      {/* Debug Overlay for Gesture Mode */}
+      {isGestureMode && (
+          <DebugHandOverlay 
+            landmarks={debugData.landmarks} 
+            status={debugData.status}
+            gesture={debugData.gesture}
+          />
+      )}
 
       {/* UI Overlay - Instructions */}
       {!selectedParticle && (
@@ -92,6 +113,8 @@ function App() {
       <ControlPanel
         rotationSpeed={rotationSpeed}
         onRotationSpeedChange={setRotationSpeed}
+        isGestureMode={isGestureMode}
+        onToggleGestureMode={() => setIsGestureMode(!isGestureMode)}
       />
     </div>
   )

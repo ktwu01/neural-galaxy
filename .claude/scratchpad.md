@@ -54,137 +54,157 @@
 
 ## High-level Task Breakdown
 
-### Phase 0: Project Setup & Validation (Est: 2-3 hours)
-**Success Criteria:** Development environment running, sample data loaded
+### Phase 0: Project Setup & Validation ✅ COMPLETE
+- [x] **Task 0.1:** Initialize React + Vite + R3F project
+- [x] **Task 0.2:** Examine and validate input data structure (488 messages)
+- [x] **Task 0.3:** Set up Python environment for data pipeline
 
-- [ ] **Task 0.1:** Initialize React + Vite + R3F project
-  - Install dependencies: `@react-three/fiber`, `@react-three/drei`, `three`
-  - Verify dev server runs and shows basic 3D scene
-  - Success: Can see a spinning cube or basic geometry
+### Phase 1A: Data Pipeline ✅ COMPLETE
+- [x] **Task 1A.1:** Extract text from chat history JSON (488 messages)
+- [x] **Task 1A.2:** Generate embeddings (all-MiniLM-L6-v2, 384-dim)
+- [x] **Task 1A.3:** Reduce to 3D coordinates with UMAP (n_neighbors=10, min_dist=0.3)
+- [x] **Task 1A.4:** Clustering and coloring (KMeans, k=5 clusters)
+- [x] **Task 1A.5:** Export galaxy data (211.8 KB JSON)
 
-- [ ] **Task 0.2:** Examine and validate input data structure
-  - Read `chat_history.json` file (if it exists)
-  - Document actual JSON schema (keys, nesting, data types)
-  - Create sample dataset with 100 entries if real data unavailable
-  - Success: Know exact format of input data
+### Phase 1B: 3D Visualization ✅ COMPLETE
+- [x] **Task 1B.1:** Create particle system component (THREE.Points + BufferGeometry)
+- [x] **Task 1B.2:** Make particles visible with glow effect (PointsMaterial + texture)
+- [x] **Task 1B.3:** Add OrbitControls for navigation
+- [x] **Task 1B.4:** Deployed with 488 particles (60 FPS)
 
-- [ ] **Task 0.3:** Set up Python environment for data pipeline
-  - Install: `sentence-transformers`, `umap-learn`, `sklearn`, `numpy`, `pandas`
-  - Verify imports work and models can download
-  - Success: Can run basic embedding test on sample text
+### Phase 1C: Click Interaction ✅ COMPLETE
+- [x] **Task 1C.1:** Implement raycasting for particle selection
+- [x] **Task 1C.2:** Create HUD overlay (ParticleHUD component with glassmorphic design)
 
-### Phase 1A: Minimal Data Pipeline (Est: 3-4 hours)
-**Success Criteria:** Can convert 100 chat entries → 3D coordinates + colors
+### Phase 1D: Enhanced UX & Controls ✅ COMPLETE
+- [x] **Task 1D.1:** Slow down auto-rotation speed (0.05 → 0.005)
+- [x] **Task 1D.2:** Implement auto-focus system (raycasting from screen center)
+- [x] **Task 1D.3:** Add focus highlight (FocusHighlight component with transparent ring)
+- [x] **Task 1D.4:** Create focus info panel (FocusPanel component at top-middle)
+- [x] **Task 1D.5:** Focus only changes on camera movement (not rotation)
+- [x] **Task 1D.6:** Tighten clustering (n_neighbors: 15→10)
+- [x] **Task 1D.7:** Increase particle separation (min_dist: 0.1→0.3)
+- [x] **Task 1D.8:** Create ControlPanel component (collapsible right-side UI)
+- [x] **Task 1D.9:** Add rotation speed slider (0-0.02 range, real-time control)
 
-- [ ] **Task 1A.1:** Extract text from chat history JSON
-  - Python script to parse JSON and extract prompts
-  - Handle missing/malformed data gracefully
-  - Export to intermediate format (CSV or simple JSON)
-  - Success: Get list of text strings with IDs
+### Phase 2A: Hand Gesture Control - The "Clean Consolidation"
+**Objective:** Merge the proven logic from Jarvis-CV back into our main React+Vite codebase.
+**Single Source of Truth:** `frontend/` directory.
 
-- [ ] **Task 1A.2:** Generate embeddings
-  - Load `all-MiniLM-L6-v2` model
-  - Convert text → 384-dim vectors
-  - Save embeddings to numpy file for caching
-  - Success: Generate embeddings for 100 samples in <30 seconds
+- [ ] **Task 2A.1:** Cleanup & Reset
+  - Remove `frontend/reference/` directory (stop using the clone)
+  - Ensure `frontend/package.json` has `camera_utils` and `hands` (Classic API)
+  - **Success:** Clean project structure, no duplicate apps.
 
-- [ ] **Task 1A.3:** Reduce to 3D coordinates with UMAP
-  - Apply UMAP with n_neighbors=15, min_dist=0.1, n_components=3
-  - Normalize coordinates to reasonable scale (e.g., -100 to +100)
-  - Success: Get 3D coordinates that spread out reasonably
+- [ ] **Task 2A.2:** Implement Proven Pattern in `GestureController.jsx`
+  - Port the `new Camera()` and `new Hands()` logic from Jarvis
+  - Use the exact CDN links for WASM
+  - Ensure `useFrame` handles smoothing
+  - **Success:** Green debug skeleton appears on YOUR face/hands in the original Galaxy app.
 
-- [ ] **Task 1A.4:** Simple clustering and coloring
-  - Use KMeans (NOT HDBSCAN for MVP - simpler)
-  - Start with k=5 clusters for simplicity
-  - Map cluster IDs to 5 distinct colors (hardcoded palette)
-  - Success: Each point has an assigned color
+- [ ] **Task 2A.3:** Verify & Tune Control Mapping
+  - Map "Pinch" to Zoom (Scale)
+  - Map "Hand Position" to Rotation
+  - Tune sensitivity so it feels like Jarvis
+  - **Success:** Galaxy moves naturally with hands.
 
-- [ ] **Task 1A.5:** Export final galaxy data
-  - Format: `[{id, x, y, z, color, text}, ...]`
-  - Save as `public/galaxy_data.json` in frontend project
-  - Validate JSON is well-formed
-  - Success: File loads in browser without errors
+### Phase 2B: Shape Morphing System (Est: 5-7 hours) - DEFERRED
+**Success Criteria:** Particles can morph into preset shapes (Heart, Flower, Saturn, Buddha, Fireworks)
 
-### Phase 1B: Minimal 3D Visualization (Est: 4-5 hours)
-**Success Criteria:** Can see 100 colored particles in 3D space, can move camera
+- [ ] **Task 2B.1:** Create shape generation algorithms (3-4 hours)
+  - Heart shape: Mathematical heart curve in 3D
+  - Flower shape: Petals arranged radially
+  - Saturn shape: Ring + sphere structure
+  - Buddha shape: Seated figure silhouette
+  - Fireworks shape: Explosive radial burst pattern
+  - Generate 488 positions for each shape
+  - **Success:** Can generate all 5 shape coordinate sets
 
-- [ ] **Task 1B.1:** Create basic particle system component
-  - Load `galaxy_data.json` via fetch
-  - Use `THREE.Points` with `BufferGeometry`
-  - Set positions from x,y,z coordinates
-  - Set colors from data (convert hex to RGB floats)
-  - Success: See particles render as dots
+- [ ] **Task 2B.2:** Implement morphing algorithm (1-2 hours)
+  - Interpolate between current positions and target shape
+  - Use smooth easing function (e.g., ease-in-out)
+  - Animate over 1-2 seconds
+  - **Success:** Smooth transition between galaxy and shapes
 
-- [ ] **Task 1B.2:** Make particles actually visible and pretty
-  - Use `PointsMaterial` with `size=2`
-  - Set `sizeAttenuation=true` for depth perception
-  - Add circle texture (sprite) for soft glow effect
-  - Success: Particles look like glowing orbs, not pixels
+- [ ] **Task 2B.3:** Shape selector UI panel (1-2 hours)
+  - Create panel with 5 shape buttons/thumbnails
+  - Add "Galaxy" button to return to original
+  - Show preview on hover
+  - **Success:** Click shape → particles morph smoothly
 
-- [ ] **Task 1B.3:** Add basic camera controls
-  - Use `<OrbitControls />` from drei (SIMPLER than FlyControls for MVP)
-  - Allow mouse drag to rotate, scroll to zoom
-  - Set reasonable limits (maxDistance, minDistance)
-  - Success: Can navigate around the particle cloud smoothly
+### Phase 2C: Visual Customization (Est: 2-3 hours) - DEFERRED
+**Success Criteria:** User can customize colors and go fullscreen
 
-- [ ] **Task 1B.4:** Test with larger dataset
-  - Scale up to 1,000 particles
-  - Measure FPS (use Stats.js or browser DevTools)
-  - Success: Maintain 60 FPS on development machine
+- [ ] **Task 2C.1:** Color picker integration (1-2 hours)
+  - Add color picker component to ControlPanel
+  - Apply color to all particles OR selected cluster
+  - Support single color / gradient / multi-color modes
+  - Update particle colors in real-time
+  - **Success:** Can customize particle colors dynamically
 
-### Phase 1C: Basic Interaction (Est: 2-3 hours)
-**Success Criteria:** Clicking a particle shows its text
+- [ ] **Task 2C.2:** Fullscreen control (1 hour)
+  - Add fullscreen toggle button to UI
+  - Handle fullscreen API events (enter/exit)
+  - Adjust UI layout for fullscreen mode
+  - **Success:** Seamless fullscreen experience
 
-- [ ] **Task 1C.1:** Implement raycasting for particle selection
-  - Add click handler to canvas
-  - Use THREE.Raycaster to detect particle intersections
-  - Success: Console logs particle data on click
+### Phase 2D: Gesture Polish (Est: 2-3 hours) - DEFERRED
+**Success Criteria:** Gesture control feels smooth and professional
 
-- [ ] **Task 1C.2:** Create simple HUD overlay
-  - CSS overlay positioned over canvas
-  - Shows selected particle's text in readable format
-  - Add close button to dismiss
-  - Success: Can read chat prompt when clicking particle
+- [ ] **Task 2D.1:** Visual feedback (1 hour)
+  - Render virtual hand cursor overlay on screen
+  - Show gesture state indicators (open/closed)
+  - Display tracking status (hands detected/lost)
+  - **Success:** User knows system is tracking hands
 
-### Phase 2: Polish & Scale Testing (Est: 3-4 hours)
-**Success Criteria:** Works with 5,000+ particles, looks presentable
+- [ ] **Task 2D.2:** Smooth interpolation and animations (1 hour)
+  - Add smooth transitions for scale changes
+  - Implement easing functions
+  - Add particle response animations
+  - **Success:** Gesture control feels fluid, not jittery
 
-- [ ] **Task 2.1:** Process full dataset
-  - Run pipeline on actual chat history (all entries)
-  - Measure processing time and identify bottlenecks
-  - Success: Generate full galaxy data file
+- [ ] **Task 2D.3:** Edge case handling (1 hour)
+  - Handle hand lost (graceful degradation)
+  - Handle multiple hands (use closest pair or dominant hand)
+  - Handle webcam permission denied (show fallback UI)
+  - **Success:** Robust gesture control in all scenarios
 
-- [ ] **Task 2.2:** Performance optimization (if needed)
-  - Test FPS with full dataset
-  - If FPS < 60, implement optimizations:
-    - Level-of-detail (LOD): render fewer particles when zoomed out
-    - Frustum culling: don't render off-screen particles
-    - Reduce particle size/complexity
-  - Success: Acceptable performance with full dataset
+### Phase 3: Polish & Scale Testing (Est: 3-4 hours)
+**Success Criteria:** Looks presentable, performs well
 
-- [ ] **Task 2.3:** Visual polish
+- [ ] **Task 3.1:** Visual polish
   - Add starfield background
   - Adjust camera starting position for good initial view
   - Fine-tune colors for better contrast
   - Add loading state while data fetches
   - Success: Looks presentable for demo
 
-- [ ] **Task 2.4:** Add cluster labels (optional enhancement)
+- [ ] **Task 3.2:** Performance optimization (if needed)
+  - Test FPS with gesture tracking active
+  - Optimize particle rendering if needed
+  - Success: Maintain 60 FPS with all features active
+
+- [ ] **Task 3.3:** Add cluster labels (optional enhancement)
   - Compute cluster centroids
   - Use `<Text3D>` or `<Text>` from drei to label major clusters
   - Success: Can identify topic areas visually
 
 ## Project Status Board
 
-**Current Phase:** Phase 1D Complete - Enhanced UX & Controls ✅
+**Current Phase:** Phase 2A (Consolidation) | Re-implementing Jarvis pattern in Original Repo
 
-### To Do (Pending) - Phase 1D: Enhanced UX & Controls (Deferred)
-- [ ] 1D.10: Add cluster tightness slider to control panel (triggers rebuild) - DEFERRED
-- [ ] 1D.11: Add particle separation slider to control panel (triggers rebuild) - DEFERRED
-  Note: These require backend integration for live rebuilding. Marked as future enhancement.
+### To Do (Pending)
+- [ ] 2A.1: Cleanup `frontend/reference` (Delete clone)
+- [ ] 2A.2: Port Jarvis logic to `GestureController.jsx`
+- [ ] 2A.3: Tune sensitivity
+
+### Deferred Tasks (Future Enhancement)
+- [ ] 1D.10: Add cluster tightness slider to control panel (triggers rebuild)
+- [ ] 1D.11: Add particle separation slider to control panel (triggers rebuild)
+  Note: These require backend integration for live rebuilding.
 
 ### In Progress
-- None
+- [→] 2A.1: Cleanup
 
 ### Completed - Phase 1D (UMAP Adjustments)
 - [x] 1D.6: Tighten clustering (n_neighbors: 15→10 for tighter, more local clusters)
@@ -231,201 +251,71 @@
 - [x] 1C.4: ESC key support to close HUD
 
 ### Blocked/Questions
-- None yet
+- None
 
 ## Current Status / Progress Tracking
 
-**Last Updated:** 2025-11-25 (Phase 1D Complete - Ready to Test & Commit)
+**Last Updated:** 2025-11-25 (Phase 2A Reboot 2 - Clean Consolidation)
 
-**Current Task:** User testing of Phase 1D enhancements before final commit
+**Current Task:** Cleaning up the multi-repo mess and implementing the proven Jarvis pattern into the original app.
 
 **Completed Milestones:**
-
-✅ **Phase 0 Complete:** Development environment fully functional
-- React + Vite + R3F project created
-- Dev server running at localhost:5173
-- 488 user messages extracted from ChatGPT export
-- Python ML environment ready
-
-✅ **Phase 1A Complete:** Data pipeline successfully generated galaxy coordinates
-- Generated 384-dim embeddings for 488 messages (all-MiniLM-L6-v2)
-- Reduced to 3D coordinates using UMAP (n_neighbors=15, min_dist=0.1)
-- Clustered into 5 semantic groups with KMeans
-- Exported 212KB galaxy_data.json with colors
-
-✅ **Phase 1B Complete:** 3D visualization deployed
-- Created Galaxy particle system component (THREE.Points with BufferGeometry)
-- 488 colored particles rendering in 3D space
-- OrbitControls for rotation/zoom navigation
-- Stats overlay for FPS monitoring
-- Auto-rotation animation active
-
-✅ **Phase 1C Complete:** Click interaction and HUD overlay
-- Raycasting for particle selection
-- ParticleHUD component with glassmorphic design
-- Click handler and state management
-- ESC key support to close HUD
-
-✅ **Phase 1D Complete:** Enhanced UX & Controls
-- Slowed auto-rotation to 0.005 (10x slower)
-- Auto-focus detection using raycaster from screen center
-- FocusHighlight component with pulsing ring
-- FocusPanel component showing focused particle info at top-middle
-- Focus only updates on camera movement (not rotation)
-- Ring position synchronized with particle rotation
-- Changed shortcut from 'O' to 'K' for better UX
-- Fixed ring transparency issue (alpha channel + alphaTest)
-- Adjusted UMAP parameters (n_neighbors: 15→10, min_dist: 0.1→0.3)
-- Created ControlPanel component with collapsible right-side UI
-- Added rotation speed slider (0-0.02 range, real-time control)
-- Rebuilt galaxy data with improved clustering and separation
+✅ **Phase 1 Complete:** Core Visualization & UX
+- 488 particles in 5 clusters
+- Interactive HUD and Focus system
+- Glassmorphic UI with Control Panel
 
 **Next Steps:**
-- User to test Phase 1D enhancements
-- Commit if successful
-- Proceed to Phase 2 (Polish & Scale Testing)
+- Execute the cleanup (rm -rf reference/jarvis)
+- Fix `GestureController.jsx` once and for all using the Reference logic.
 
 ## Executor's Feedback or Assistance Requests
 
 **Open Questions for User:**
-
-1. ✅ **Data Location:** RESOLVED - Data is at `data/conversations example to be clean PII.json` (26MB, ChatGPT export format)
-
-2. **Development Environment:** What machine will this run on? (Need to know specs for performance targets)
-
-3. **Scope Confirmation:** User approved proceeding as Executor ("lets do it as exe")
+1. **Performance Check:** Does the app still crash or freeze on your machine? (Should be fixed now)
+2. **Gesture Feel:** How does the "Fly" mode feel compared to "Orbit"?
 
 **Technical Clarifications Needed:**
-- None yet (will populate as implementation progresses)
+- None
 
 ## Lessons Learned
+
+### Web Worker Architecture for Computer Vision (2025-11-25)
+
+**Problem:** Running MediaPipe (`@mediapipe/tasks-vision`) on the main thread alongside Three.js caused severe UI freezing and dropped frames.
+
+**Solution:** Implemented the "Off-Main-Thread" pattern:
+1.  **Worker:** `vision.worker.js` handles the heavy ML inference loop.
+2.  **Main Thread:** `GestureController.jsx` sends video frames (via `createImageBitmap`) to the worker and receives lightweight coordinates.
+3.  **Synchronization:** Used `createImageBitmap` (transferable) to prevent copying large video frames.
+4.  **Smoothing:** Used `lerp` (Linear Interpolation) in the `useFrame` loop to animate the camera smoothly (60 FPS) even if the worker only sends updates at 20 FPS.
+
+**Key Takeaway:** For any heavy ML or CV task in the browser, ALWAYS use a Web Worker. Never block the UI thread.
 
 ### Git Security: Personal Data in galaxy_data.json (2025-11-25)
 
 **Issue:** galaxy_data.json contains personal chat history and was previously committed to git (commit 407faaf).
 
 **Actions Taken:**
-1. ✅ Added `frontend/public/galaxy_data.json` to .gitignore
+1. ✅ Added `*.json` to .gitignore (user updated to broader pattern)
 2. ✅ Removed from git tracking: `git rm --cached frontend/public/galaxy_data.json`
-3. ⚠️ **Still exists in git history** (commit 407faaf)
-
-**To Completely Remove from History (User Decision Required):**
-
-Option 1: **BFG Repo-Cleaner** (Recommended - Fast & Safe)
-```bash
-# Install BFG (if not installed)
-brew install bfg  # macOS
-
-# Remove file from all commits
-bfg --delete-files galaxy_data.json
-
-# Clean up
-git reflog expire --expire=now --all && git gc --prune=now --aggressive
-```
-
-Option 2: **git filter-branch** (Built-in but slower)
-```bash
-git filter-branch --force --index-filter \
-  "git rm --cached --ignore-unmatch frontend/public/galaxy_data.json" \
-  --prune-empty --tag-name-filter cat -- --all
-
-git reflog expire --expire=now --all && git gc --prune=now --aggressive
-```
-
-⚠️ **Warning:** Both options rewrite git history. If already pushed to remote, will require force push.
+3. ✅ Committed removal in b794094
+4. ⚠️ **Still exists in git history** (commit 407faaf) - User decided to keep as-is (safest approach)
 
 **Key Lesson:** Always add files with personal data to .gitignore BEFORE first commit.
 
+### MediaPipe Performance Issue (2025-11-25)
+
+**Problem:** OLD MediaPipe `@mediapipe/hands` package crashes with WebGL errors.
+
+**Solution:** Switched to NEW `@mediapipe/tasks-vision` API (2024 recommended).
+
+**Lesson:** Always use the latest recommended API from official docs. Old packages can have critical compatibility issues.
+
 ### Canvas Texture Transparency Issue (2025-11-25)
 
-**Problem:** Focus ring was blocking particles behind it, appearing as an opaque rectangle even though `transparent: true` was set on the SpriteMaterial.
+**Problem:** Focus ring was blocking particles behind it.
 
-**Root Cause:** Canvas elements have a default opaque background. When creating a CanvasTexture in Three.js, the canvas background (typically white or black) gets rendered as part of the texture, creating a rectangular "layer" that occludes objects behind it.
+**Solution:** Call `ctx.clearRect(0, 0, width, height)` BEFORE drawing any shapes on the canvas.
 
-**Solution:** Call `ctx.clearRect(0, 0, width, height)` BEFORE drawing any shapes on the canvas. This clears the canvas to fully transparent (alpha = 0), so only the drawn shapes (the ring) are visible.
-
-**Code Fix:**
-```javascript
-// Enable alpha channel when creating context
-const ctx = canvas.getContext('2d', { alpha: true })
-ctx.clearRect(0, 0, 128, 128)  // Clear to transparent first
-// ... then draw ring shapes
-
-// In SpriteMaterial:
-transparent={true}
-alphaTest={0.01}  // Discard pixels with alpha < 0.01
-depthWrite={false}  // Don't write to depth buffer
-blending={THREE.AdditiveBlending}
-```
-
-**Key Lesson:** When creating custom textures with HTML Canvas for Three.js materials:
-1. Create context with `{ alpha: true }` option to enable alpha channel
-2. Always clear canvas to transparent first: `ctx.clearRect()`
-3. Use `alphaTest` to discard fully transparent pixels (prevents black rectangles)
-4. Set `depthWrite={false}` to prevent z-buffer issues with transparency
-5. The `transparent: true` material property only respects alpha channel in the texture
-
-### Data Format Documentation
-
-**Input File:** `data/conversations example to be clean PII.json`
-- **Size:** 26MB
-- **Format:** ChatGPT conversation export (array of conversation objects)
-- **Structure:**
-  - Each conversation has: `title`, `create_time`, `update_time`, `mapping` (nested message tree)
-  - Messages in `mapping` object have: `id`, `message.content.parts[]` (text), `message.author.role` (user/assistant/system)
-  - Need to extract user prompts from messages where `author.role === "user"`
-  - Text content is in `message.content.parts[]` array
-
-### From Planning Phase
-
-**Lesson 1: Start Small, Measure, Then Scale**
-- Original blueprint assumed 20K particles would work fine
-- Reality: Need to test with 100 → 1000 → 5000 → 10000+ incrementally
-- Measure FPS at each stage before adding visual effects
-
-**Lesson 2: Use Proven Libraries Over Custom Implementations**
-- Blueprint suggested FlyControls with custom momentum physics
-- Better approach: Start with OrbitControls (simpler, proven), upgrade later if needed
-- Don't reinvent the wheel for MVP
-
-**Lesson 3: Defer Complex Features**
-- Gesture control (MediaPipe) is a separate project entirely
-- Bloom effects and additive blending can wait until basic visualization works
-- Focus on core value: seeing your thoughts in 3D space
-
-**Lesson 4: Data Pipeline Is Half the Project**
-- Embeddings, UMAP, clustering, coloring = many moving parts
-- Each step needs validation before moving to next
-- Cache intermediate results (embeddings) to speed up iteration
-
----
-
-## PLANNER SUMMARY FOR USER REVIEW
-
-### Key Changes from Original Blueprint:
-
-**⭐ Simplified Scope:**
-- MVP uses OrbitControls (rotate/zoom) instead of FPS flying initially
-- Click to select particles instead of proximity-based reveal
-- Deferred: Gesture control, bloom effects, momentum physics, 3D text labels
-
-**⭐ Incremental Approach:**
-- Start with 100 particles → 1,000 → 5,000+ (test performance at each stage)
-- Use KMeans (k=5) instead of HDBSCAN for simpler clustering
-- Validate 2D projections before committing to 3D UMAP
-
-**⭐ Risk Mitigation:**
-- Clear success criteria for each task
-- Time estimates for planning
-- Built-in performance checkpoints
-- Fallback options documented
-
-**⭐ What Stays from Original Vision:**
-- Same tech stack (React + R3F + sentence-transformers + UMAP)
-- Same visual aesthetic (space + colored clusters + particles)
-- Same data structure ({x, y, z, color, text})
-- Same end goal: navigable 3D universe of your thoughts
-
-**Estimated Total Time:** 14-19 hours of focused development work
-
-**Ready to Proceed?** Awaiting user approval to switch to Executor mode and begin Phase 0.
+**Key Lesson:** When creating custom textures with HTML Canvas for Three.js materials, always clear canvas to transparent first.
