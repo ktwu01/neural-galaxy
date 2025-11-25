@@ -3,11 +3,12 @@ import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Camera } from '@mediapipe/camera_utils';
 import { Hands, HAND_CONNECTIONS } from '@mediapipe/hands';
+import { GESTURE_CONFIG } from './config';
 
 // Helper for smoothing
 const lerp = (start, end, factor) => start + (end - start) * factor;
 
-export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHandsUpdate }) => {
+export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHandsUpdate, flySpeed = 90, enableTwoHandRotation = false }) => {
   const { camera } = useThree();
   const videoRef = useRef(null);
   const isMountedRef = useRef(true);
@@ -37,10 +38,10 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
     });
 
     hands.setOptions({
-      maxNumHands: 2, // Enable two hands for pinch-to-scale
+      maxNumHands: GESTURE_CONFIG.maxNumHands,
       modelComplexity: 1,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5,
+      minDetectionConfidence: GESTURE_CONFIG.minDetectionConfidence,
+      minTrackingConfidence: GESTURE_CONFIG.minTrackingConfidence,
     });
 
     hands.onResults((results) => {
@@ -84,7 +85,10 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
         });
       }
 
-      // 1. TWO-HAND SCALING (Pinch to Zoom)
+      // DEFAULT: FREEZE (no movement unless explicitly commanded)
+      targetVelocity.current = 0;
+
+      // 1. TWO-HAND MODE: ONLY ZOOM (no travel, no rotate)
       if (leftHand && rightHand) {
         const leftIndex = leftHand[8]; // Index finger tip
         const rightIndex = rightHand[8];
@@ -95,8 +99,12 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
 
         if (prevPinchDist.current !== null) {
           const delta = dist - prevPinchDist.current;
-          if (Math.abs(delta) > 0.01) {
-            // Map distance change to FOV (zoom)
+          
+          // Velocity threshold: Ignore if hands move too fast (repositioning)
+          const MIN_DELTA = 0.01;  // Ignore tiny jitters
+          const MAX_DELTA = 0.15;  // Ignore super fast movements (repositioning)
+          
+          if (Math.abs(delta) > MIN_DELTA && Math.abs(delta) < MAX_DELTA) {
             // Spread hands apart (increase dist) -> decrease FOV (zoom in)
             // Bring hands together (decrease dist) -> increase FOV (zoom out)
             targetFOV.current = Math.max(30, Math.min(90, targetFOV.current - delta * 100));
@@ -104,8 +112,11 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
         }
         prevPinchDist.current = dist;
         
+        // FREEZE travel when two hands detected
+        targetVelocity.current = 0;
+        
         onDebugData({ 
-          status: "Two Hands - Pinch to Zoom",
+          status: "Two Hands - Pinch to Zoom (Travel Frozen)",
           leftHand: leftHand,
           rightHand: rightHand,
           gesture: { categoryName: "PINCH_SCALE" } 
@@ -113,19 +124,39 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
       } else {
         prevPinchDist.current = null;
         
-        // 2. SINGLE-HAND CONTROL
+        // 2. SINGLE-HAND MODE: Travel + Rotate
         const activeHand = rightHand || leftHand;
         
         if (activeHand) {
           const gesture = detectGesture(activeHand);
-          onDebugData({ status: "Tracking", landmarks: activeHand, gesture: { categoryName: gesture } });
+          // Always show the active hand in debug overlay
+          onDebugData({ 
+            status: `Tracking (${rightHand ? 'Right' : 'Left'} Hand)`, 
+            leftHand: leftHand,
+            rightHand: rightHand,
+            gesture: { categoryName: gesture } 
+          });
 
           // Use palm center (landmark 9) for tracking
           const palmCenter = { x: activeHand[9].x, y: activeHand[9].y };
 
+          // TRAVEL CONTROL: GRAB = forward, VICTORY = backward
           if (gesture === "GRAB") {
-            // GRAB: Rotate the galaxy (drag)
-            if (prevHandPos.current) {
+            targetVelocity.current = GESTURE_CONFIG.grabVelocity; // GRAB = Fly forward
+          } else if (gesture === "VICTORY") {
+            targetVelocity.current = GESTURE_CONFIG.victoryVelocity; // VICTORY = Fly backward
+          } else {
+            targetVelocity.current = GESTURE_CONFIG.idleVelocity; // FREEZE (no gesture = no movement)
+          }
+
+          // ROTATION CONTROL: GRAB + enableTwoHandRotation = rotate
+          if (gesture === "GRAB" && enableTwoHandRotation) {
+            // Edge detection: Ignore if hand is near screen edges (entering/leaving frame)
+            // palmCenter x,y are normalized (0-1), so check if > 0.8 or < 0.2
+            const isNearEdge = palmCenter.x < 0.2 || palmCenter.x > 0.8 || 
+                               palmCenter.y < 0.2 || palmCenter.y > 0.8;
+            
+            if (!isNearEdge && prevHandPos.current) {
               const deltaX = palmCenter.x - prevHandPos.current.x;
               const deltaY = palmCenter.y - prevHandPos.current.y;
 
@@ -139,24 +170,19 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
                 });
               }
             }
-            prevHandPos.current = palmCenter;
-            targetVelocity.current = 0; // Stop moving when grabbing
-          } else {
-            // Other gestures: camera control
-            prevHandPos.current = null;
             
-            // Use Wrist (0) for camera rotation
-            const wrist = activeHand[0];
-            targetRotation.current.x = (wrist.y - 0.5) * 1.5; 
-            targetRotation.current.y = (wrist.x - 0.5) * 1.5; 
-
-            // Map Gesture to Velocity
-            if (gesture === "PALM_OPEN") targetVelocity.current = 1; // Fly
-            else if (gesture === "VICTORY") targetVelocity.current = -0.5; // Reverse
-            else targetVelocity.current = 0; // Default stop
+            // Update position only if not near edge (to avoid jumps when re-entering)
+            if (!isNearEdge) {
+              prevHandPos.current = palmCenter;
+            } else {
+              prevHandPos.current = null; // Reset to avoid jump when hand returns to center
+            }
+          } else {
+            prevHandPos.current = null;
           }
         } else {
-          onDebugData({ status: "Searching for hands..." });
+          // No hands detected: FREEZE everything
+          onDebugData({ status: "Searching for hands... (Frozen)" });
           targetVelocity.current = 0;
           prevHandPos.current = null;
         }
@@ -170,8 +196,8 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
           await hands.send({ image: videoElement });
         }
       },
-      width: 320, // Low res for performance
-      height: 240,
+      width: GESTURE_CONFIG.videoWidth,
+      height: GESTURE_CONFIG.videoHeight,
     });
 
     cameraUtils.start()
@@ -196,7 +222,7 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
     camera.updateProjectionMatrix(); // Required after FOV change
     
     // B. Apply Forward Movement
-    const speed = 30; // Units per second (reduced from 50 for better control)
+    const speed = flySpeed; // Units per second (controllable via prop)
     const currentSpeed = lerp(0, speed * targetVelocity.current, 0.1); // Smooth acceleration
     
     if (Math.abs(currentSpeed) > 0.1) {
@@ -205,8 +231,8 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
 
     // C. Boundary Detection & Bounce
     // Galaxy data spans roughly -25 to +25 in each axis (50 units total)
-    // Set boundary at radius 150 (comfortable viewing distance)
-    const maxDistance = 150;
+    // Set boundary at configured distance (comfortable viewing distance)
+    const maxDistance = GESTURE_CONFIG.maxBoundaryDistance;
     const distanceFromOrigin = Math.sqrt(
       camera.position.x ** 2 + 
       camera.position.y ** 2 + 
@@ -218,7 +244,7 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
       targetVelocity.current = -Math.abs(targetVelocity.current);
       
       // Gently push camera back toward origin
-      const pushBackStrength = 0.5;
+      const pushBackStrength = GESTURE_CONFIG.boundaryPushBackStrength;
       camera.position.x *= (1 - pushBackStrength * delta);
       camera.position.y *= (1 - pushBackStrength * delta);
       camera.position.z *= (1 - pushBackStrength * delta);
@@ -251,7 +277,7 @@ function detectGesture(landmarks) {
 
     // Pinch check (Thumb + Index close)
     const pinchDist = Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y);
-    if (pinchDist < 0.05) return "PINCH";
+    if (pinchDist < GESTURE_CONFIG.pinchThreshold) return "PINCH";
 
     if (indexExt && middleExt && ringExt && pinkyExt) return "PALM_OPEN";
     if (!indexExt && !middleExt && !ringExt && !pinkyExt) return "GRAB"; // Fist

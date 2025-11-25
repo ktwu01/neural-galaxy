@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export function ControlPanel({ rotationSpeed, onRotationSpeedChange, isGestureMode, onToggleGestureMode }) {
+export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, onFlySpeedChange, isGestureMode, onToggleGestureMode, enableTwoHandRotation, onToggleTwoHandRotation }) {
   const [isExpanded, setIsExpanded] = useState(false)
 
 
@@ -156,6 +156,80 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, isGestureMo
             <span>Fast</span>
           </div>
         </div>
+
+        {/* Fly Speed Slider (only show in gesture mode) */}
+        {isGestureMode && (
+          <div style={{ marginBottom: '25px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '12px',
+              marginBottom: '8px',
+              color: 'rgba(255, 255, 255, 0.7)',
+            }}>
+              Fly Speed
+            </label>
+            <input
+              type="range"
+              min="10"
+              max="200"
+              step="10"
+              value={flySpeed}
+              onChange={(e) => onFlySpeedChange(parseFloat(e.target.value))}
+              style={{
+                width: '100%',
+                height: '4px',
+                borderRadius: '2px',
+                outline: 'none',
+                background: 'rgba(255, 255, 255, 0.2)',
+                cursor: 'pointer',
+              }}
+            />
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '10px',
+              marginTop: '4px',
+              color: 'rgba(255, 255, 255, 0.5)',
+            }}>
+              <span>Slow</span>
+              <span style={{ color: 'white' }}>{flySpeed} units/s</span>
+              <span>Fast</span>
+            </div>
+          </div>
+        )}
+
+        {/* Two-Hand Rotation Toggle (only show in gesture mode) */}
+        {isGestureMode && (
+          <div style={{ marginBottom: '25px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '12px',
+              marginBottom: '8px',
+              color: 'rgba(255, 255, 255, 0.7)',
+            }}>
+              Two-Hand Rotation
+            </label>
+            <button
+              onClick={onToggleTwoHandRotation}
+              style={{
+                width: '100%',
+                padding: '8px',
+                background: enableTwoHandRotation ? 'rgba(100, 255, 100, 0.2)' : 'rgba(255, 100, 100, 0.2)',
+                border: enableTwoHandRotation ? '1px solid rgba(100, 255, 100, 0.5)' : '1px solid rgba(255, 100, 100, 0.5)',
+                borderRadius: '4px',
+                color: enableTwoHandRotation ? '#aaffaa' : '#ffaaaa',
+                cursor: 'pointer',
+                fontSize: '12px',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              {enableTwoHandRotation ? '✅ Enabled' : '❌ Disabled'}
+            </button>
+            <div style={{ fontSize: '10px', marginTop: '4px', color: 'rgba(255, 255, 255, 0.5)' }}>
+              {enableTwoHandRotation ? 'GRAB gesture rotates galaxy' : 'GRAB gesture disabled'}
+            </div>
+          </div>
+        )}
 
         {/* Info Section */}
         <div style={{

@@ -52,9 +52,9 @@ export function DebugHandOverlay({ leftHand, rightHand, status, gesture }) {
       ctx.fillText(label, landmarks[0].x * canvas.width + 10, landmarks[0].y * canvas.height - 10)
     }
 
-    // Draw both hands
-    drawHand(leftHand, '#00ff00', 'LEFT')
-    drawHand(rightHand, '#ff00ff', 'RIGHT')
+    // Draw both hands (labels swapped to match user perspective)
+    drawHand(leftHand, '#00ff00', 'RIGHT')
+    drawHand(rightHand, '#ff00ff', 'LEFT')
 
     // Draw Status/Gesture Text
     ctx.fillStyle = 'rgba(0, 255, 0, 0.8)'

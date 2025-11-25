@@ -25,7 +25,56 @@ export function Galaxy({ onParticleClick, onFocusChange, focusedParticle, rotati
       })
       .then(data => {
         console.log(`✅ Loaded ${data.length} galaxy points`)
-        setGalaxyData(data)
+        
+        // --- DATA TRANSFORMATION ---
+        // 1. Group by color (Cluster detection)
+        const clusters = {}
+        data.forEach(p => {
+          if (!clusters[p.color]) clusters[p.color] = { points: [], center: { x: 0, y: 0, z: 0 } }
+          clusters[p.color].points.push(p)
+          clusters[p.color].center.x += p.x
+          clusters[p.color].center.y += p.y
+          clusters[p.color].center.z += p.z
+        })
+
+        // 2. Calculate centers
+        Object.values(clusters).forEach(cluster => {
+          const count = cluster.points.length
+          cluster.center.x /= count
+          cluster.center.y /= count
+          cluster.center.z /= count
+        })
+
+        // 3. Apply Transformation
+        // Compress Clusters: Move centers 0.5x closer to origin (compact galaxy)
+        // Expand Internals: Move points 5x further from cluster center (see individual particles)
+        const CLUSTER_COMPRESSION = 0.5
+        const POINT_EXPANSION = 5.0
+
+        const transformedData = data.map(p => {
+          const cluster = clusters[p.color]
+          const center = cluster.center
+          
+          // Vector from Center to Point
+          const relX = p.x - center.x
+          const relY = p.y - center.y
+          const relZ = p.z - center.z
+          
+          // New Center Position
+          const newCenterX = center.x * CLUSTER_COMPRESSION
+          const newCenterY = center.y * CLUSTER_COMPRESSION
+          const newCenterZ = center.z * CLUSTER_COMPRESSION
+          
+          // New Point Position
+          return {
+            ...p,
+            x: newCenterX + (relX * POINT_EXPANSION),
+            y: newCenterY + (relY * POINT_EXPANSION),
+            z: newCenterZ + (relZ * POINT_EXPANSION)
+          }
+        })
+
+        setGalaxyData(transformedData)
         setLoading(false)
       })
       .catch(err => {
@@ -139,7 +188,7 @@ export function Galaxy({ onParticleClick, onFocusChange, focusedParticle, rotati
 
     // Create point material with texture
     const mat = new THREE.PointsMaterial({
-      size: 3.5,
+      size: 10.5, // 3x larger (was 3.5)
       sizeAttenuation: true,
       vertexColors: true,
       transparent: true,

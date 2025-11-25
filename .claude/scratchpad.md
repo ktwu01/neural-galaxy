@@ -184,11 +184,19 @@ const camera = new Camera(videoElement, {
 
 ## Executor's Feedback or Assistance Requests
 
-**Ready to Execute:**
-- P1: Speed reduction (simple multiplier change)
-- P2: Boundary detection (distance check + velocity reversal)
-- P3: Two-hand support (config change + tracking logic)
+**Completed:**
+- ✅ P1: Speed reduction (implemented with config)
+- ✅ P2: Boundary detection (implemented with bounce-back)
+- ✅ P3: Two-hand support (implemented with zoom)
+- ✅ P5: Grab-to-Rotate (implemented with toggle)
+- ✅ Configuration centralization (all gesture params now in config.js)
 
-**Questions:**
-- What should the galaxy boundary radius be? (Current data spans ~50 units)
-- Should bounce be elastic (preserve speed) or damped (slow down)?
+**Latest Changes:**
+- Moved all hardcoded gesture values to `frontend/src/config.js`:
+  - Velocity multipliers (grabVelocity: 3.0, victoryVelocity: -3.0)
+  - Hand tracking settings (maxNumHands, confidence thresholds)
+  - Video resolution (320x240)
+  - Boundary settings (maxBoundaryDistance: 150)
+  - Pinch threshold (0.05)
+- Updated `GestureController.jsx` to import and use `GESTURE_CONFIG`
+- Separated travel control from rotation control logic

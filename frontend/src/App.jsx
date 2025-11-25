@@ -15,6 +15,8 @@ function App() {
   const [focusedParticle, setFocusedParticle] = useState(null)
   const [rotationSpeed, setRotationSpeed] = useState(0.005)
   const [isGestureMode, setIsGestureMode] = useState(true)
+  const [flySpeed, setFlySpeed] = useState(90) // Base fly speed (3x from 30)
+  const [enableTwoHandRotation, setEnableTwoHandRotation] = useState(false) // Disabled by default
   
   // Debug State for Gesture Mode
   const [debugData, setDebugData] = useState({ landmarks: null, gesture: null, status: null })
@@ -75,6 +77,8 @@ function App() {
              onDebugData={setDebugData}
              onGalaxyRotationChange={setGalaxyRotation}
              onHandsUpdate={setHandsUI}
+             flySpeed={flySpeed}
+             enableTwoHandRotation={enableTwoHandRotation}
            />
         ) : (
           <OrbitControls
@@ -91,7 +95,8 @@ function App() {
       {/* Debug Overlay for Gesture Mode */}
       {isGestureMode && (
           <DebugHandOverlay 
-            landmarks={debugData.landmarks} 
+            leftHand={debugData.leftHand}
+            rightHand={debugData.rightHand}
             status={debugData.status}
             gesture={debugData.gesture}
           />
@@ -129,8 +134,12 @@ function App() {
       <ControlPanel
         rotationSpeed={rotationSpeed}
         onRotationSpeedChange={setRotationSpeed}
+        flySpeed={flySpeed}
+        onFlySpeedChange={setFlySpeed}
         isGestureMode={isGestureMode}
         onToggleGestureMode={() => setIsGestureMode(!isGestureMode)}
+        enableTwoHandRotation={enableTwoHandRotation}
+        onToggleTwoHandRotation={() => setEnableTwoHandRotation(!enableTwoHandRotation)}
       />
 
       {/* Debug Overlay for Gesture Mode */}
