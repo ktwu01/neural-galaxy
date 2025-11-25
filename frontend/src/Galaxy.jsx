@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { FocusHighlight } from './FocusHighlight'
 
-export function Galaxy({ onParticleClick, onFocusChange, focusedParticle }) {
+export function Galaxy({ onParticleClick, onFocusChange, focusedParticle, rotationSpeed = 0.005 }) {
   const [galaxyData, setGalaxyData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -153,10 +153,10 @@ export function Galaxy({ onParticleClick, onFocusChange, focusedParticle }) {
     return { geometry: geo, material: mat }
   }, [galaxyData, particleTexture])
 
-  // Gentle rotation animation (slowed down to 1/10) + Auto-focus detection
+  // Gentle rotation animation (controllable speed) + Auto-focus detection
   useFrame((state) => {
     if (pointsRef.current) {
-      pointsRef.current.rotation.y = state.clock.getElapsedTime() * 0.005
+      pointsRef.current.rotation.y = state.clock.getElapsedTime() * rotationSpeed
     }
 
     // Auto-focus: detect particle closest to screen center (only when camera moves)

@@ -176,18 +176,25 @@
 
 ## Project Status Board
 
-**Current Phase:** Phase 1D Partially Complete - Enhanced UX & Controls
+**Current Phase:** Phase 1D Complete - Enhanced UX & Controls ✅
 
-### To Do (Pending) - Phase 1D: Enhanced UX & Controls (Remaining)
-- [ ] 1D.6: Tighten clustering (reduce inter-cluster separation in UMAP)
-- [ ] 1D.7: Increase particle separation (increase min_dist in UMAP)
-- [ ] 1D.8: Create right-side control panel UI
-- [ ] 1D.9: Add rotation speed slider to control panel
-- [ ] 1D.10: Add cluster tightness slider to control panel (triggers rebuild)
-- [ ] 1D.11: Add particle separation slider to control panel (triggers rebuild)
+### To Do (Pending) - Phase 1D: Enhanced UX & Controls (Deferred)
+- [ ] 1D.10: Add cluster tightness slider to control panel (triggers rebuild) - DEFERRED
+- [ ] 1D.11: Add particle separation slider to control panel (triggers rebuild) - DEFERRED
+  Note: These require backend integration for live rebuilding. Marked as future enhancement.
 
 ### In Progress
 - None
+
+### Completed - Phase 1D (UMAP Adjustments)
+- [x] 1D.6: Tighten clustering (n_neighbors: 15→10 for tighter, more local clusters)
+- [x] 1D.7: Increase particle separation (min_dist: 0.1→0.3 for better spread)
+
+### Completed - Phase 1D (Control Panel UI)
+- [x] 1D.8: Create right-side control panel UI (ControlPanel component)
+- [x] 1D.9: Add rotation speed slider to control panel (0-0.02 range, real-time control)
+- [x] 1D.9.1: Improve toggle button visibility (blue glow + stronger border)
+- [x] 1D.9.2: Change toggle icon to settings gear (SVG icon, best practice)
 
 ### Completed - Phase 1D (Auto-Focus & Highlight)
 - [x] 1D.1: Slow down auto-rotation speed (reduced to 0.005 from 0.05)
@@ -228,9 +235,9 @@
 
 ## Current Status / Progress Tracking
 
-**Last Updated:** 2025-11-25 (Phase 1D Auto-Focus & Highlight Complete - Ready to Commit)
+**Last Updated:** 2025-11-25 (Phase 1D Complete - Ready to Test & Commit)
 
-**Current Task:** Ready to commit Phase 1D progress and continue with remaining tasks
+**Current Task:** User testing of Phase 1D enhancements before final commit
 
 **Completed Milestones:**
 
@@ -259,7 +266,7 @@
 - Click handler and state management
 - ESC key support to close HUD
 
-✅ **Phase 1D (Partial) Complete:** Auto-focus system and highlight ring
+✅ **Phase 1D Complete:** Enhanced UX & Controls
 - Slowed auto-rotation to 0.005 (10x slower)
 - Auto-focus detection using raycaster from screen center
 - FocusHighlight component with pulsing ring
@@ -268,10 +275,15 @@
 - Ring position synchronized with particle rotation
 - Changed shortcut from 'O' to 'K' for better UX
 - Fixed ring transparency issue (alpha channel + alphaTest)
+- Adjusted UMAP parameters (n_neighbors: 15→10, min_dist: 0.1→0.3)
+- Created ControlPanel component with collapsible right-side UI
+- Added rotation speed slider (0-0.02 range, real-time control)
+- Rebuilt galaxy data with improved clustering and separation
 
 **Next Steps:**
-- Commit current progress
-- Continue with Phase 1D remaining tasks (control panel UI + UMAP parameter adjustments)
+- User to test Phase 1D enhancements
+- Commit if successful
+- Proceed to Phase 2 (Polish & Scale Testing)
 
 ## Executor's Feedback or Assistance Requests
 
@@ -287,6 +299,42 @@
 - None yet (will populate as implementation progresses)
 
 ## Lessons Learned
+
+### Git Security: Personal Data in galaxy_data.json (2025-11-25)
+
+**Issue:** galaxy_data.json contains personal chat history and was previously committed to git (commit 407faaf).
+
+**Actions Taken:**
+1. ✅ Added `frontend/public/galaxy_data.json` to .gitignore
+2. ✅ Removed from git tracking: `git rm --cached frontend/public/galaxy_data.json`
+3. ⚠️ **Still exists in git history** (commit 407faaf)
+
+**To Completely Remove from History (User Decision Required):**
+
+Option 1: **BFG Repo-Cleaner** (Recommended - Fast & Safe)
+```bash
+# Install BFG (if not installed)
+brew install bfg  # macOS
+
+# Remove file from all commits
+bfg --delete-files galaxy_data.json
+
+# Clean up
+git reflog expire --expire=now --all && git gc --prune=now --aggressive
+```
+
+Option 2: **git filter-branch** (Built-in but slower)
+```bash
+git filter-branch --force --index-filter \
+  "git rm --cached --ignore-unmatch frontend/public/galaxy_data.json" \
+  --prune-empty --tag-name-filter cat -- --all
+
+git reflog expire --expire=now --all && git gc --prune=now --aggressive
+```
+
+⚠️ **Warning:** Both options rewrite git history. If already pushed to remote, will require force push.
+
+**Key Lesson:** Always add files with personal data to .gitignore BEFORE first commit.
 
 ### Canvas Texture Transparency Issue (2025-11-25)
 

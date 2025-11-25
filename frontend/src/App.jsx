@@ -4,11 +4,13 @@ import { OrbitControls } from '@react-three/drei'
 import { Galaxy } from './Galaxy'
 import { ParticleHUD } from './ParticleHUD'
 import { FocusPanel } from './FocusPanel'
+import { ControlPanel } from './ControlPanel'
 import './App.css'
 
 function App() {
   const [selectedParticle, setSelectedParticle] = useState(null)
   const [focusedParticle, setFocusedParticle] = useState(null)
+  const [rotationSpeed, setRotationSpeed] = useState(0.005)
 
 
   // Handle keyboard shortcuts
@@ -44,6 +46,7 @@ function App() {
           onParticleClick={null}
           onFocusChange={setFocusedParticle}
           focusedParticle={focusedParticle}
+          rotationSpeed={rotationSpeed}
         />
 
         {/* Camera controls */}
@@ -83,6 +86,12 @@ function App() {
       <ParticleHUD
         particle={selectedParticle}
         onClose={() => setSelectedParticle(null)}
+      />
+
+      {/* Control Panel (right side) */}
+      <ControlPanel
+        rotationSpeed={rotationSpeed}
+        onRotationSpeedChange={setRotationSpeed}
       />
     </div>
   )

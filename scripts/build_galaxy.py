@@ -32,8 +32,16 @@ def generate_embeddings(messages, model_name='all-MiniLM-L6-v2'):
     print(f"✅ Generated embeddings: shape {embeddings.shape}")
     return embeddings
 
-def reduce_to_3d(embeddings, n_neighbors=15, min_dist=0.1):
-    """Reduce embeddings to 3D coordinates using UMAP."""
+def reduce_to_3d(embeddings, n_neighbors=10, min_dist=0.3):
+    """
+    Reduce embeddings to 3D coordinates using UMAP.
+    
+    Parameters:
+    - n_neighbors: Controls cluster tightness (lower = tighter clusters, more local structure)
+                   Range: 5-50, Default: 10 (reduced from 15 for tighter clusters)
+    - min_dist: Controls particle separation (higher = more spread out)
+                Range: 0.0-1.0, Default: 0.3 (increased from 0.1 for better separation)
+    """
     print(f"\n🗺️  Applying UMAP (n_neighbors={n_neighbors}, min_dist={min_dist})...")
 
     reducer = umap.UMAP(
