@@ -4,13 +4,15 @@ Then we should follow the best practice in @jarvis.
 
 ## Middle
 
-- [ ] Add import bottom and preprocess part via browser/connect seamlessly
-    - [ ] Design UI for file upload/import button
-    - [ ] Implement file reader for chat history formats (JSON, CSV, TXT)
-    - [ ] Add data validation and error handling for imported files
-    - [ ] Implement preprocessing pipeline (tokenization, embedding generation)
+- [x] Add import bottom and preprocess part via browser/connect seamlessly
+    - [x] Design UI for file upload/import button
+    - [x] Implement file reader for chat history formats (JSON only)
+            with description on how to export ?
+    - [x] Add data validation and error handling for imported files
+    - [x] Implement preprocessing pipeline (tokenization, embedding generation) - *Implemented basic text summarization and random positioning. Full UMAP/clustering is a future task.*
     - [ ] Add progress indicator for import/preprocessing workflow
-    - [ ] Update galaxy data structure to accept dynamically imported data
+    - [ ] Update @CONFIGURATION.md to know that upload = import in our context. And sometimes, the scripts can be named as `upload_xx` instead of `import_xx`.
+    - [x] Update galaxy data structure to accept dynamically imported data
     - [ ] Test end-to-end import workflow with sample data
 
 - [ ] As many of the users, they might have like 100 conversations, so this such low number might not be very suitable for creating a nebula or a galaxy. So how about   change our method of considering like ungroup our conversation instead we make a   large word galaxy instead of conversation galaxy. Like each word has its own   particle.

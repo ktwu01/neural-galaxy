@@ -11,13 +11,13 @@
 export const CAMERA_CONFIG = {
   initialPosition: [0, 0, 200],
   initialFOV: 60,
-  
+
   // OrbitControls settings
   orbitDampingFactor: 0.05,
   orbitRotateSpeed: 0.5,
   orbitZoomSpeed: 0.8,
   orbitMinDistance: 50,
-  orbitMaxDistance: 500,
+  orbitMaxDistance: 3000,
 };
 
 // ============================================================
@@ -28,11 +28,11 @@ export const GESTURE_CONFIG = {
   defaultFlySpeed: 90,
   minFlySpeed: 10,
   maxFlySpeed: 200,
-  
+
   // Boundary detection (3D free zone)
   defaultBoundaryDistance: 500, // Default (used by App.jsx state)
   minBoundaryDistance: 100,     // Min: close boundary
-  maxBoundaryDistance: 2000,    // Max: very large boundary
+  maxBoundaryDistance: CAMERA_CONFIG.orbitMaxDistance, // Match OrbitControls maxDistance (single source of truth)
   boundaryPushBackStrength: 0.5,
   
   // Edge detection for rotation (prevent mis-rotation near screen edges)

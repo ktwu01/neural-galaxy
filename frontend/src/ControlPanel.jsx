@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FaCog, FaTimes, FaHands, FaMousePointer, FaCheck, FaBan } from 'react-icons/fa'
+import { GESTURE_CONFIG } from './config'
 
 export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, onFlySpeedChange, isGestureMode, onToggleGestureMode, enableTwoHandRotation, onToggleTwoHandRotation, enableHeadTracking, onToggleHeadTracking, edgeThreshold, onEdgeThresholdChange, boundaryDistance, onBoundaryDistanceChange }) {
   const [isExpanded, setIsExpanded] = useState(false) // Start folded by default
@@ -141,8 +142,8 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
             </label>
             <input
               type="range"
-              min="10"
-              max="200"
+              min={GESTURE_CONFIG.minFlySpeed}
+              max={GESTURE_CONFIG.maxFlySpeed}
               step="10"
               value={flySpeed}
               onChange={(e) => onFlySpeedChange(parseFloat(e.target.value))}
@@ -183,8 +184,8 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
             </label>
             <input
               type="range"
-              min="100"
-              max="1000"
+              min={GESTURE_CONFIG.minBoundaryDistance}
+              max={GESTURE_CONFIG.maxBoundaryDistance}
               step="50"
               value={boundaryDistance}
               onChange={(e) => onBoundaryDistanceChange(parseFloat(e.target.value))}

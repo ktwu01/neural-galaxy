@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { FocusHighlight } from './FocusHighlight'
 
-export const Galaxy = forwardRef(({ onParticleClick, onFocusChange, focusedParticle, rotationSpeed = 0.005, isGestureMode = false, galaxyRotation = { x: 0, y: 0 } }, ref) => {
+export const Galaxy = forwardRef(({ onParticleClick, onFocusChange, focusedParticle, rotationSpeed = 0.005, isGestureMode = false, galaxyRotation = { x: 0, y: 0 }, customGalaxyData = null }, ref) => {
   const [galaxyData, setGalaxyData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -21,73 +21,48 @@ export const Galaxy = forwardRef(({ onParticleClick, onFocusChange, focusedParti
   // Configure raycaster for point cloud - increased threshold for better detection at distance
   raycaster.current.params.Points.threshold = 10
 
-  // Load galaxy data
+  // Load and process galaxy data
   useEffect(() => {
-    fetch('/galaxy_data.json')
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json()
-      })
-      .then(data => {
-        console.log(`✅ Loaded ${data.length} galaxy points`)
-        
-        // --- DATA TRANSFORMATION ---
-        // 1. Group by color (Cluster detection)
-        const clusters = {}
-        data.forEach(p => {
-          if (!clusters[p.color]) clusters[p.color] = { points: [], center: { x: 0, y: 0, z: 0 } }
-          clusters[p.color].points.push(p)
-          clusters[p.color].center.x += p.x
-          clusters[p.color].center.y += p.y
-          clusters[p.color].center.z += p.z
+    const processData = (data) => {
+      console.log(`[Galaxy.jsx] ✅ Processing ${data.length} galaxy points`);
+      
+      // --- DATA TRANSFORMATION ---
+      // This part can be enhanced later. For now, it just ensures the data is in the right format.
+      // The random positions are generated in App.jsx, so we just use them here.
+      const transformedData = data.map(p => ({
+        ...p,
+        // Ensure x, y, z are numbers
+        x: Number(p.x) || 0,
+        y: Number(p.y) || 0,
+        z: Number(p.z) || 0,
+      }));
+
+      setGalaxyData(transformedData);
+      setLoading(false);
+    };
+
+    setLoading(true);
+    if (customGalaxyData && customGalaxyData.length > 0) {
+      console.log('[Galaxy.jsx] Using custom data provided via props.');
+      processData(customGalaxyData);
+    } else {
+      console.log('[Galaxy.jsx] No custom data, loading default galaxy_data.json.');
+      fetch('/galaxy_data.json')
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
         })
-
-        // 2. Calculate centers
-        Object.values(clusters).forEach(cluster => {
-          const count = cluster.points.length
-          cluster.center.x /= count
-          cluster.center.y /= count
-          cluster.center.z /= count
+        .then(data => {
+          processData(data);
         })
+        .catch(err => {
+          console.error('[Galaxy.jsx] ❌ Failed to load default galaxy data:', err);
+          setError(err.message);
+          setLoading(false);
+        });
+    }
+  }, [customGalaxyData]); // Re-run this effect when customGalaxyData changes
 
-        // 3. Apply Transformation
-        // Compress Clusters: Move centers 0.5x closer to origin (compact galaxy)
-        // Expand Internals: Move points 5x further from cluster center (see individual particles)
-        const CLUSTER_COMPRESSION = 0.5
-        const POINT_EXPANSION = 5.0
-
-        const transformedData = data.map(p => {
-          const cluster = clusters[p.color]
-          const center = cluster.center
-          
-          // Vector from Center to Point
-          const relX = p.x - center.x
-          const relY = p.y - center.y
-          const relZ = p.z - center.z
-          
-          // New Center Position
-          const newCenterX = center.x * CLUSTER_COMPRESSION
-          const newCenterY = center.y * CLUSTER_COMPRESSION
-          const newCenterZ = center.z * CLUSTER_COMPRESSION
-          
-          // New Point Position
-          return {
-            ...p,
-            x: newCenterX + (relX * POINT_EXPANSION),
-            y: newCenterY + (relY * POINT_EXPANSION),
-            z: newCenterZ + (relZ * POINT_EXPANSION)
-          }
-        })
-
-        setGalaxyData(transformedData)
-        setLoading(false)
-      })
-      .catch(err => {
-        console.error('❌ Failed to load galaxy data:', err)
-        setError(err.message)
-        setLoading(false)
-      })
-  }, [])
 
   // Handle click on canvas
   useEffect(() => {

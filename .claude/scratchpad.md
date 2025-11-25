@@ -63,14 +63,103 @@
 ### Phase 4: Import & Dynamic Data (MEDIUM PRIORITY)
 **Goal:** Allow users to import their own chat history and generate personalized galaxies
 
+**Current Status:** Basic file upload UI implemented, needs:
+- Setup guide for first-time users
+- Export instructions
+- Data preprocessing pipeline
+- Icon fix (upward → downward arrow)
+
 **Tasks:**
-- [ ] Design UI for file upload/import button
-- [ ] Implement file reader for chat history formats (JSON, CSV, TXT)
-- [ ] Add data validation and error handling for imported files
-- [ ] Implement preprocessing pipeline (tokenization, embedding generation)
+- [x] Design UI for file upload/import button
+- [x] Implement file reader for chat history formats (JSON only - updated scope)
+- [x] Add data validation and error handling for imported files
+- [x] Fix import icon (use downward arrow FaDownload, not upward FaUpload)
+- [x] Create Setup Guide for first-time user onboarding
+- [x] Add export instructions (how to get chat history from Claude.ai, ChatGPT, etc.)
+- [x] Implement preprocessing pipeline (tokenization, embedding generation)
+      add Debug code so that it will show Via Google Chrome Console
+      Let the user verify this process is correct
 - [ ] Add progress indicator for import/preprocessing workflow
 - [ ] Update galaxy data structure to accept dynamically imported data
 - [ ] Test end-to-end import workflow with sample data
+
+### Phase 4A: Setup Guide & User Onboarding (HIGH PRIORITY)
+**Goal:** Guide first-time users to import their own chat history with clear instructions
+
+**Problem:**
+- Users don't know they can import their own data
+- No guidance on how to export chat history from various platforms
+- Import feature is hidden (must discover button)
+
+**Solution: First-Time User Experience**
+
+**Components to Build:**
+1. **SetupGuide.jsx** - Main wizard container with stepper
+2. **WelcomeStep.jsx** - Introduction and choice (import vs demo)
+3. **ExportInstructions.jsx** - Platform-specific export guides
+4. **FileUploadStep.jsx** - Reuse existing FileUpload component
+5. **ProcessingStep.jsx** - Show preprocessing progress
+6. **SuccessStep.jsx** - Completion + quick tutorial
+
+**Flow:**
+```
+User visits app → Check localStorage
+  ├─ Setup complete? → Show main app
+  └─ First time? → Show Setup Guide
+       ↓
+    Welcome Screen ("Welcome to Neural Galaxy")
+       ↓
+    ┌──────────────┴──────────────┐
+    ↓                             ↓
+Import My Data              Try Demo Data
+    ↓                             ↓
+Export Instructions         Skip to Main App
+    ↓
+File Import (with validation)
+    ↓
+Processing (UMAP, clustering)
+    ↓
+Success + Tutorial
+    ↓
+Main App (with custom galaxy)
+```
+
+**Export Instructions Content:**
+
+<!-- Do not do this for current. **For Claude.ai:**
+- Settings → Data Export
+- Wait for email with download link
+- Unzipped downloaded file
+- Import `conversations.json` inside the extracted folder to here -->
+
+**For ChatGPT:**
+- Settings → Data controls → Export data
+- Wait for email with download link
+- Unzipped downloaded file
+- Import `conversations.json` inside the extracted folder to here
+
+**Generic Format:**
+- JSON array of conversation objects
+- Required fields: `title`, `text`/`content`
+- Example structure (collapsible)
+
+**localStorage Keys:**
+- `neuralGalaxy_setupComplete`: boolean
+- `neuralGalaxy_hasCustomData`: boolean
+- `neuralGalaxy_skipSetup`: boolean (if user dismissed guide)
+
+**Design Decisions:**
+- Setup guide is **skippable** (not mandatory)
+- Demo data always available via settings
+- Can re-run setup guide from settings menu
+- Keyboard shortcut ESC to close guide
+
+**Success Criteria:**
+- User understands they can import their own data
+- Clear step-by-step export instructions
+- Smooth onboarding experience
+- Can skip and use demo data
+- Setup only shows once (unless manually triggered)
 
 ### Phase 5: Word-Based Galaxy Architecture (MEDIUM PRIORITY)
 **Goal:** Scale system to handle 100+ conversations by shifting from conversation-based to word-based particles
