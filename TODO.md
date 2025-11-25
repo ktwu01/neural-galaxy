@@ -2,9 +2,13 @@
 
 Then we should follow the best practice in @jarvis.
 
-- [ ] You act as planner. let's add a global window which shows all the galaxy region. Let this panel be in the buttom left. In the top right, add a back panel to see the location we are at the Galaxy. Just like what GTA does In 2D map, here is 3D (Projected to 2D). Explain to me your plan before doing it.
-
 ## Middle
+
+- [ ] UI: remove Currently annoying feat: is called an "Inset Layout" or a "Floating Viewport." It creates a "window-within-a-window" aesthetic, making the web app feel more like a native OS application or a dashboard.
+
+no need to do with gesturee  panel. minimap to be                    │
+│   circle-bordered(currently rectangle bordered). the annoying thing    │
+│   is, the universe is not full screen,   not the panel
 
 - [ ] As many of the users, they might have like 100 conversations, so this such low number might not be very suitable for creating a nebula or a galaxy. So how about   change our method of considering like ungroup our conversation instead we make a   large word galaxy instead of conversation galaxy. Like each word has its own   particle.
 
@@ -38,3 +42,5 @@ by default: freeze (no rotate, no travel)
 - [x] no, this is conflict between display/ reality. when i in reality show RIGHT + PINTCH, I see the skeleton detect show correctly the `RIGHT [DOT] PINTCH`, but it might be the system not really detecting/mis-transporting some parameters/arguments. For example, at this time i tell that from top-left panel:   left right hand flipped (text shown good; img need to be flipped. that is after img flip, the txt should also flip). solve this.
 
 - [x] Let gesture info panel be in the buttom-right.
+
+- [x] You act as planner. let's add a global window which shows all the galaxy region. Let this panel be in the buttom left. In the top right, add a back panel to see the location we are at the Galaxy. Just like what GTA does In 2D map, here is 3D (Projected to 2D). Explain to me your plan before doing it.
