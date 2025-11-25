@@ -65,7 +65,7 @@ def extract_user_messages(json_path):
     return messages
 
 def main():
-    input_path = Path('data/conversations example to be clean PII.json')
+    input_path = Path('data/conversations.json')
 
     if not input_path.exists():
         print(f"Error: {input_path} not found", file=sys.stderr)

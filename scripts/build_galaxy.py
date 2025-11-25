@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 """
 Build galaxy visualization data from extracted messages.
-Pipeline: Load messages → Embeddings → UMAP → Clustering → Export
+Pipeline: Load messages → Generate random spherical coordinates → Export
 """
 import json
 import numpy as np
 from pathlib import Path
-from sentence_transformers import SentenceTransformer
-import umap
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import MinMaxScaler
 
 # Import centralized configuration
 from config import *
@@ -21,70 +17,33 @@ def load_messages(json_path):
     print(f"✅ Loaded {len(messages)} messages")
     return messages
 
-def generate_embeddings(messages, model_name=EMBEDDING_MODEL):
-    """Generate embeddings for message texts."""
-    print(f"\n📊 Generating embeddings with {model_name}...")
-    model = SentenceTransformer(model_name)
-
-    # Extract texts
-    texts = [msg['text'] for msg in messages]
-
-    # Generate embeddings
-    embeddings = model.encode(texts, show_progress_bar=True)
-
-    print(f"✅ Generated embeddings: shape {embeddings.shape}")
-    return embeddings
-
-def reduce_to_3d(embeddings, n_neighbors=UMAP_N_NEIGHBORS, min_dist=UMAP_MIN_DIST):
+def generate_spherical_coords(n_points, scale=COORDINATE_SCALE, shell_thickness=50):
     """
-    Reduce embeddings to 3D coordinates using UMAP.
-    Uses parameters from config.py
+    Generates random 3D coordinates in a spherical shell, mimicking the frontend's
+    import behavior for a harmonized, non-clustered look.
     """
-    print(f"\n🗺️  Applying UMAP (n_neighbors={n_neighbors}, min_dist={min_dist})...")
+    print(f"\n🌐 Generating random spherical coordinates for {n_points} points...")
+    
+    radius = scale + np.random.rand(n_points) * shell_thickness
+    phi = np.arccos(2 * np.random.rand(n_points) - 1)
+    theta = np.random.rand(n_points) * 2 * np.pi
 
-    reducer = umap.UMAP(
-        n_components=3,
-        n_neighbors=n_neighbors,
-        min_dist=min_dist,
-        metric=UMAP_METRIC,
-        random_state=UMAP_RANDOM_STATE
-    )
+    x = radius * np.cos(theta) * np.sin(phi)
+    y = radius * np.sin(theta) * np.sin(phi)
+    z = radius * np.cos(phi)
 
-    coords_3d = reducer.fit_transform(embeddings)
+    coords = np.stack([x, y, z], axis=1)
+    print(f"✅ Generated coordinates: shape {coords.shape}")
+    return coords
 
-    print(f"✅ Reduced to 3D: shape {coords_3d.shape}")
-    print(f"   X range: [{coords_3d[:, 0].min():.2f}, {coords_3d[:, 0].max():.2f}]")
-    print(f"   Y range: [{coords_3d[:, 1].min():.2f}, {coords_3d[:, 1].max():.2f}]")
-    print(f"   Z range: [{coords_3d[:, 2].min():.2f}, {coords_3d[:, 2].max():.2f}]")
-
-    return coords_3d
-
-def normalize_coordinates(coords, scale=COORDINATE_SCALE):
-    """Normalize coordinates to [-scale, +scale] range."""
-    scaler = MinMaxScaler(feature_range=(-scale, scale))
-    normalized = scaler.fit_transform(coords)
-    return normalized
-
-def cluster_and_color(embeddings, n_clusters=NUM_CLUSTERS):
-    """Cluster embeddings and assign colors."""
-    print(f"\n🎨 Clustering into {n_clusters} groups...")
-
-    kmeans = KMeans(n_clusters=n_clusters, random_state=KMEANS_RANDOM_STATE, n_init=10)
-    cluster_labels = kmeans.fit_predict(embeddings)
-
-    # Use color palette from config
-    colors = CLUSTER_COLORS
-
-    # Assign colors based on cluster
-    point_colors = [colors[label % len(colors)] for label in cluster_labels]
-
-    # Count cluster sizes
-    unique, counts = np.unique(cluster_labels, return_counts=True)
-    for cluster_id, count in zip(unique, counts):
-        print(f"   Cluster {cluster_id}: {count} points ({colors[cluster_id % len(colors)]})")
-
-    print(f"✅ Assigned colors to {len(point_colors)} points")
-    return point_colors, cluster_labels
+def generate_random_colors(n_points, color_palette=CLUSTER_COLORS):
+    """Assigns a random color from the palette to each point."""
+    print(f"\n🎨 Assigning random colors...")
+    num_colors = len(color_palette)
+    random_indices = np.random.randint(0, num_colors, size=n_points)
+    colors = [color_palette[i] for i in random_indices]
+    print(f"✅ Assigned colors to {len(colors)} points")
+    return colors
 
 def export_galaxy_data(messages, coords, colors, output_path):
     """Export galaxy data to JSON for frontend."""
@@ -92,15 +51,26 @@ def export_galaxy_data(messages, coords, colors, output_path):
 
     galaxy_points = []
     for i, msg in enumerate(messages):
+        text = msg['text'][:MAX_TEXT_LENGTH]
+        word_count = len(text.split())
+
+        if word_count < 30:
+            size = 8.0
+        elif word_count < 150:
+            size = 12.0
+        else:
+            size = 16.0
+
         galaxy_points.append({
             'id': msg['id'],
             'x': float(coords[i, 0]),
             'y': float(coords[i, 1]),
             'z': float(coords[i, 2]),
             'color': colors[i],
-            'text': msg['text'][:MAX_TEXT_LENGTH],  # Limit text length for performance
+            'text': text,
             'title': msg['conversation_title'],
-            'timestamp': msg['create_time']
+            'timestamp': msg['create_time'],
+            'size': size,
         })
 
     # Create output directory if needed
@@ -114,7 +84,7 @@ def export_galaxy_data(messages, coords, colors, output_path):
 
 def main():
     print("=" * 60)
-    print("NEURAL GALAXY BUILDER")
+    print("NEURAL GALAXY BUILDER (SPHERICAL MODE)")
     print("=" * 60)
 
     # Paths from config
@@ -123,19 +93,16 @@ def main():
 
     # Step 1: Load messages
     messages = load_messages(input_path)
+    num_messages = len(messages)
 
-    # Step 2: Generate embeddings
-    embeddings = generate_embeddings(messages)
+    # Step 2: Generate spherical coordinates (replaces UMAP)
+    coords = generate_spherical_coords(num_messages)
 
-    # Step 3: Reduce to 3D
-    coords_raw = reduce_to_3d(embeddings)
-    coords_normalized = normalize_coordinates(coords_raw)
+    # Step 3: Generate random colors (replaces clustering)
+    colors = generate_random_colors(num_messages)
 
-    # Step 4: Cluster and color
-    colors, cluster_labels = cluster_and_color(embeddings)
-
-    # Step 5: Export
-    export_galaxy_data(messages, coords_normalized, colors, output_path)
+    # Step 4: Export
+    export_galaxy_data(messages, coords, colors, output_path)
 
     print("\n" + "=" * 60)
     print("✅ GALAXY BUILD COMPLETE!")

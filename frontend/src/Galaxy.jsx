@@ -136,6 +136,8 @@ export const Galaxy = forwardRef(({ onParticleClick, onFocusChange, focusedParti
     const positions = new Float32Array(count * 3)
     // Color array (r, g, b for each point)
     const colors = new Float32Array(count * 3)
+    // Size array (for per-particle size)
+    const sizes = new Float32Array(count)
 
     // Helper to convert hex color to RGB
     const hexToRgb = (hex) => {
@@ -161,14 +163,18 @@ export const Galaxy = forwardRef(({ onParticleClick, onFocusChange, focusedParti
       colors[i3] = rgb.r
       colors[i3 + 1] = rgb.g
       colors[i3 + 2] = rgb.b
+
+      // Sizes
+      sizes[i] = point.size || 10.5; // Use defined size or a default
     })
 
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
     geo.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+    geo.setAttribute('customSize', new THREE.BufferAttribute(sizes, 1))
 
     // Create point material with texture
     const mat = new THREE.PointsMaterial({
-      size: 10.5, // 3x larger (was 3.5)
+      size: 10.5, // This will be overridden by the shader patch
       sizeAttenuation: true,
       vertexColors: true,
       transparent: true,
@@ -177,6 +183,27 @@ export const Galaxy = forwardRef(({ onParticleClick, onFocusChange, focusedParti
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     })
+
+    // Patch material's shader to use our custom size attribute
+    mat.onBeforeCompile = shader => {
+      shader.vertexShader = shader.vertexShader
+        .replace(
+          '#include <common>',
+          `
+          #include <common>
+          attribute float customSize;
+          `
+        )
+        .replace(
+          '#include <size_vertex>',
+          `
+          #include <size_vertex>
+          // Use our custom size, attenuated by distance
+          gl_PointSize = customSize * ( 300.0 / -mvPosition.z );
+          `
+        );
+    };
+
 
     console.log('✅ Geometry and material created')
     return { geometry: geo, material: mat }

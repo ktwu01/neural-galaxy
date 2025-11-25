@@ -234,6 +234,16 @@ function App() {
           return null; 
       }
 
+      const word_count = text ? text.split(/\s+/).length : 0;
+      let size;
+      if (word_count < 30) {
+          size = 8.0;
+      } else if (word_count < 150) {
+          size = 12.0;
+      } else {
+          size = 16.0;
+      }
+
       // Use the item's own title if available, otherwise generate one.
       const title = item.title || `Imported Item ${index + 1}`;
       const id = item.id || `imported-${index}`;
@@ -253,6 +263,7 @@ function App() {
         x: radius * Math.cos(theta) * Math.sin(phi),
         y: radius * Math.sin(theta) * Math.sin(phi),
         z: radius * Math.cos(phi),
+        size: size,
       };
     }).filter(item => item !== null); // Filter out the items we couldn't process
 
