@@ -1,12 +1,14 @@
 ## Critical
 
-data points大小由该points的words量决定
+使用新的测试对话内容而非我自己的内容.
 
-使用新的测试对话内容而非我自己的内容
+Deploy to Amazon. 如果数量超过fifty MB的话，需要by me coffee any amount
 
+demo video
+
+SEO
 
 ## Middle
-如果数量超过fifty MB的话，需要by me coffee any amount
 
 - [ ] As many of the users, they might have like 100 conversations, so this such low number might not be very suitable for creating a nebula or a galaxy. So how about   change our method of considering like ungroup our conversation instead we make a   large word galaxy instead of conversation galaxy. Like each word has its own   particle.
 
@@ -76,3 +78,5 @@ Oh what the fucking shit. It's definitely stupid retard to use emojis as icons. 
     - [x] Update @CONFIGURATION.md to know that upload = import in our context. And sometimes, the scripts can be named as `upload_xx` instead of `import_xx`.
     - [x] Update galaxy data structure to accept dynamically imported data
     - [x] Test end-to-end import workflow with sample data
+
+- [x] data points大小由该points的words量决定
