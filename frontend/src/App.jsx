@@ -10,6 +10,7 @@ import { HandCursor } from './HandCursor'
 import { GestureInfoPanel } from './GestureInfoPanel'
 import Minimap, { MinimapUpdater } from './Minimap'
 import { GESTURE_CONFIG } from './config'
+import { FaStar, FaCodeBranch, FaLinkedin, FaTwitter, FaGithub } from 'react-icons/fa'
 import './App.css'
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
   const [isGestureMode, setIsGestureMode] = useState(true)
   const [flySpeed, setFlySpeed] = useState(GESTURE_CONFIG.defaultFlySpeed)
   const [enableTwoHandRotation, setEnableTwoHandRotation] = useState(false) // Disabled by default
-  const [enableHeadTracking, setEnableHeadTracking] = useState(GESTURE_CONFIG.enableHeadTracking)
+  const [enableHeadTracking, setEnableHeadTracking] = useState(GESTURE_CONFIG.enableHeadTracking) // Re-added
   const [edgeThreshold, setEdgeThreshold] = useState(GESTURE_CONFIG.defaultEdgeThreshold)
   const [boundaryDistance, setBoundaryDistance] = useState(GESTURE_CONFIG.defaultBoundaryDistance)
   
@@ -104,7 +105,7 @@ function App() {
       </Canvas>
       
 
-      {/* UI Overlay - Instructions */}
+      {/* UI Overlay - Top Left */}
       {!selectedParticle && (
         <div style={{
           position: 'absolute',
@@ -112,14 +113,18 @@ function App() {
           left: 20,
           color: 'white',
           fontFamily: 'monospace',
-          fontSize: '14px',
-          pointerEvents: 'none',
-          textShadow: '0 0 4px rgba(0,0,0,0.8)'
+          pointerEvents: 'none', // Allow clicks to pass through
+          textShadow: '0 0 4px rgba(0,0,0,0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
         }}>
-          <div>🌌 Neural Galaxy</div>
-          {/* <div style={{ fontSize: '12px', opacity: 0.7, marginTop: '8px' }}>
-            Drag to rotate | Scroll to zoom | Press K to open
-          </div> */}
+          <div style={{ fontSize: '24px', fontWeight: 'bold', textShadow: '0 0 10px #00ffff' }}>Neural Galaxy</div>
+          {/* GitHub Repo Links */}
+          <div style={{ pointerEvents: 'auto', display: 'flex', gap: '8px', fontSize: '24px' }}>
+            <a href="https://github.com/ktwu01/neural-galaxy" target="_blank" rel="noopener noreferrer" style={{ color: '#00ffff', textDecoration: 'none' }}><FaStar /></a>
+            <a href="https://github.com/ktwu01/neural-galaxy/fork" target="_blank" rel="noopener noreferrer" style={{ color: '#00ffff', textDecoration: 'none' }}><FaCodeBranch /></a>
+          </div>
         </div>
       )}
 
@@ -132,23 +137,39 @@ function App() {
         onClose={() => setSelectedParticle(null)}
       />
 
-      {/* Control Panel (right side) */}
-      <ControlPanel
-        rotationSpeed={rotationSpeed}
-        onRotationSpeedChange={setRotationSpeed}
-        flySpeed={flySpeed}
-        onFlySpeedChange={setFlySpeed}
-        isGestureMode={isGestureMode}
-        onToggleGestureMode={() => setIsGestureMode(!isGestureMode)}
-        enableHeadTracking={enableHeadTracking}
-        onToggleHeadTracking={() => setEnableHeadTracking(!enableHeadTracking)}
-        enableTwoHandRotation={enableTwoHandRotation}
-        onToggleTwoHandRotation={() => setEnableTwoHandRotation(!enableTwoHandRotation)}
-        edgeThreshold={edgeThreshold}
-        onEdgeThresholdChange={setEdgeThreshold}
-        boundaryDistance={boundaryDistance}
-        onBoundaryDistanceChange={setBoundaryDistance}
-      />
+      {/* Top Right UI Container for Socials and Control Panel */}
+      <div style={{
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        zIndex: 100,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+      }}>
+        {/* Social Icons */}
+        <div style={{ display: 'flex', gap: '8px', fontSize: '24px' }}>
+          <a href="https://www.linkedin.com/in/ktwu01/" target="_blank" rel="noopener noreferrer" style={{ color: '#00ffff', textDecoration: 'none', pointerEvents: 'auto' }}><FaLinkedin /></a>
+          <a href="https://x.com/ktwu01" target="_blank" rel="noopener noreferrer" style={{ color: '#00ffff', textDecoration: 'none', pointerEvents: 'auto' }}><FaTwitter /></a>
+          <a href="https://github.com/ktwu01/" target="_blank" rel="noopener noreferrer" style={{ color: '#00ffff', textDecoration: 'none', pointerEvents: 'auto' }}><FaGithub /></a>
+        </div>
+        {/* Control Panel (right side) */}
+        <ControlPanel
+          rotationSpeed={rotationSpeed}
+          onRotationSpeedChange={setRotationSpeed}
+          flySpeed={flySpeed}
+          onFlySpeedChange={setFlySpeed}
+          isGestureMode={isGestureMode}
+          onToggleGestureMode={() => setIsGestureMode(!isGestureMode)}
+          // onToggleHeadTracking={() => setEnableHeadTracking(!enableHeadTracking)} // Removed as it's always enabled
+          enableTwoHandRotation={enableTwoHandRotation}
+          onToggleTwoHandRotation={() => setEnableTwoHandRotation(!enableTwoHandRotation)}
+          edgeThreshold={edgeThreshold}
+          onEdgeThresholdChange={setEdgeThreshold}
+          boundaryDistance={boundaryDistance}
+          onBoundaryDistanceChange={setBoundaryDistance}
+        />
+      </div>
 
 
       {/* Hand Skeleton Overlays (Visual Feedback) */}

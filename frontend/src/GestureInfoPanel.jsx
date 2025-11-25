@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { FaHandRock, FaHandPeace, FaHands, FaLocationArrow, FaBars, FaHandPointUp } from 'react-icons/fa'; // Import needed icons
 
 export function GestureInfoPanel({ isGestureMode }) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -11,8 +12,8 @@ export function GestureInfoPanel({ isGestureMode }) {
       const panelWidth = panelRef.current.offsetWidth;
       const panelHeight = panelRef.current.offsetHeight;
       setPosition({
-        x: 100, // Initial top-left position
-        y: 50, // Initial top-left position
+        x: 20, // Initial top-left position
+        y: 100, // Initial top-left position
       });
     }
   }, [isGestureMode]);
@@ -86,7 +87,7 @@ export function GestureInfoPanel({ isGestureMode }) {
         }}
         onMouseDown={handleMouseDown}
       >
-        &#x2630;
+        <FaBars />
       </div>
       <div style={{
         fontSize: '14px',
@@ -102,7 +103,7 @@ export function GestureInfoPanel({ isGestureMode }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
         {/* GRAB/PINCH - Forward */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-          <span style={{ fontSize: '20px' }}>✊🤏</span>
+          <span style={{ fontSize: '20px' }}><FaHandRock /> <FaHandPointUp /></span>
           <div>
             <div style={{ fontWeight: 'bold', color: 'rgba(0, 255, 136, 0.7)' }}>GRAB / PINCH</div>
             <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.6)' }}>Fly Forward</div>
@@ -111,7 +112,7 @@ export function GestureInfoPanel({ isGestureMode }) {
 
         {/* VICTORY - Backward */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-          <span style={{ fontSize: '20px' }}>✌️</span>
+          <span style={{ fontSize: '20px' }}><FaHandPeace /></span>
           <div>
             <div style={{ fontWeight: 'bold', color: 'rgba(0, 255, 136, 0.7)' }}>VICTORY</div>
             <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.6)' }}>Fly Backward</div>
@@ -120,7 +121,7 @@ export function GestureInfoPanel({ isGestureMode }) {
 
         {/* Two Hands - Zoom */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-          <span style={{ fontSize: '20px' }}>🤲</span>
+          <span style={{ fontSize: '20px' }}><FaHands /></span>
           <div>
             <div style={{ fontWeight: 'bold', color: 'rgba(0, 255, 136, 0.7)' }}>TWO HANDS</div>
             <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.6)' }}>Pinch/Spread to Zoom</div>
@@ -129,7 +130,7 @@ export function GestureInfoPanel({ isGestureMode }) {
 
         {/* Direction Control */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-          <span style={{ fontSize: '20px' }}>👉</span>
+          <span style={{ fontSize: '20px' }}><FaLocationArrow /></span>
           <div>
             <div style={{ fontWeight: 'bold', color: 'rgba(0, 255, 136, 0.7)' }}>DIRECTION</div>
             <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.6)' }}>Hand position steers (center = straight)</div>

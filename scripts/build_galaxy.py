@@ -114,7 +114,7 @@ def export_galaxy_data(messages, coords, colors, output_path):
 
 def main():
     print("=" * 60)
-    print("🌌 NEURAL GALAXY BUILDER")
+    print("NEURAL GALAXY BUILDER")
     print("=" * 60)
 
     # Paths from config

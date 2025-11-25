@@ -4,14 +4,16 @@ Then we should follow the best practice in @jarvis.
 
 ## Middle
 
-- [ ] UI: remove Currently annoying feat: is called an "Inset Layout" or a "Floating Viewport." It creates a "window-within-a-window" aesthetic, making the web app feel more like a native OS application or a dashboard.
-
-no need to do with gesturee  panel. minimap to be                    │
-│   circle-bordered(currently rectangle bordered). the annoying thing    │
-│   is, the universe is not full screen,   not the panel
+- [ ] Add import bottom and preprocess part via browser/connect seamlessly
+    - [ ] you LLM split this task!!!
 
 - [ ] As many of the users, they might have like 100 conversations, so this such low number might not be very suitable for creating a nebula or a galaxy. So how about   change our method of considering like ungroup our conversation instead we make a   large word galaxy instead of conversation galaxy. Like each word has its own   particle.
 
+## UI Enhancements:
+- [ ] Make "Neural Galaxy" title very highlighted (larger, shining font).
+- [ ] Move GitHub repo Fork/Star links to be next to the "Neural Galaxy" title.
+- [x] Move social icons (LinkedIn, X, GitHub profile) to be next to the "Settings" toggle icon (outside the panel), and make them clickable.
+- [x] Set "Settings Panel" to be folded (closed) by default.
 
 ## Small
 - [ ] Each individual particle should be more separated spatially. We should have a control panel in the right To control this parameter\(if its techinally easy)
@@ -44,3 +46,12 @@ by default: freeze (no rotate, no travel)
 - [x] Let gesture info panel be in the buttom-right.
 
 - [x] You act as planner. let's add a global window which shows all the galaxy region. Let this panel be in the buttom left. In the top right, add a back panel to see the location we are at the Galaxy. Just like what GTA does In 2D map, here is 3D (Projected to 2D). Explain to me your plan before doing it.
+
+- [x] no need to do with gesturee  panel. minimap to be                    │
+│   circle-bordered(currently rectangle bordered). the annoying thing    │
+│   is, the universe is not full screen,   not the panel
+
+- [x] UI: remove Currently annoying feat: is called an "Inset Layout" or a "Floating Viewport." It creates a "window-within-a-window" aesthetic, making the web app feel more like a native OS application or a dashboard.
+
+- [x] SEO: Add LinkedIn (https://www.linkedin.com/in/ktwu01/), X (https://x.com/ktwu01), GitHub Profile (https://github.com/ktwu01/), and GitHub Repo (https://github.com/ktwu01/neural-galaxy) links.
+Oh what the fucking shit. It's definitely stupid retard to use emojis as icons. use best practice: use favicons   

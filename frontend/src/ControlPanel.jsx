@@ -1,40 +1,39 @@
 import { useState } from 'react'
+import { FaCog, FaTimes, FaHands, FaMousePointer, FaCheck, FaBan } from 'react-icons/fa'
 
 export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, onFlySpeedChange, isGestureMode, onToggleGestureMode, enableTwoHandRotation, onToggleTwoHandRotation, enableHeadTracking, onToggleHeadTracking, edgeThreshold, onEdgeThresholdChange, boundaryDistance, onBoundaryDistanceChange }) {
-  const [isExpanded, setIsExpanded] = useState(true) // Start expanded by default
+  const [isExpanded, setIsExpanded] = useState(false) // Start folded by default
 
 
   return (
     <div
       style={{
-        position: 'fixed',
-        top: '20px',
-        right: '20px',
-        zIndex: 100,
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
       }}
     >
       {/* Settings Icon / Toggle, always visible and clickable */}
       <div
         onClick={() => setIsExpanded(!isExpanded)}
         style={{
-          position: 'absolute',
-          top: '5px',
-          right: '5px',
           cursor: 'pointer',
-          color: 'rgba(255, 255, 255, 0.7)',
-          fontSize: '16px',
+          color: '#00ffff',
+          fontSize: '24px',
           lineHeight: '1',
           zIndex: 101, // Above the panel content
         }}
         title={isExpanded ? 'Close Settings' : 'Open Settings'}
       >
-        {isExpanded ? '❌' : '⚙️'}
+        {isExpanded ? <FaTimes /> : <FaCog />}
       </div>
 
       {/* Panel Content, visibility is toggled */}
       <div
         style={{
-          width: '150px',
+          position: 'absolute',
+          top: '35px',
+          right: '0px',
           background: 'rgba(0, 0, 0, 0.5)',
           backdropFilter: 'blur(10px)',
           borderRadius: '8px',
@@ -42,21 +41,26 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
           fontFamily: 'monospace',
           color: 'white',
           boxShadow: '0 0 10px rgba(100, 150, 255, 0.1)',
-          transition: 'opacity 0.3s ease',
+          transition: 'opacity 0.3s ease, transform 0.3s ease',
           opacity: isExpanded ? 1 : 0,
+          transform: isExpanded ? 'translateY(0)' : 'translateY(-10px)',
           pointerEvents: isExpanded ? 'auto' : 'none',
+          width: '150px',
+          visibility: isExpanded ? 'visible' : 'hidden'
         }}
       >
-        <h3 style={{
-          margin: '0 0 10px 0',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          borderBottom: 'none',
-          paddingBottom: '5px',
-          color: 'rgba(100, 150, 255, 0.8)',
-        }}>
-          Settings
-        </h3>
+        <div style={{ opacity: isExpanded ? 1 : 0, transition: 'opacity 0.2s 0.1s ease-in' }}>
+          <h3 style={{
+            margin: '0 0 10px 0',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            borderBottom: 'none',
+            paddingBottom: '5px',
+            color: '#00ffff', // Highlighted color
+          }}>
+            Settings
+          </h3>
+
 
         {/* Control Mode Button */}
         <div style={{ marginBottom: '15px' }}>
@@ -80,9 +84,13 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
               cursor: 'pointer',
               fontSize: '11px',
               transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '5px'
             }}
           >
-            {isGestureMode ? '👋 Hands' : '🖱️ Mouse'}
+            {isGestureMode ? <><FaHands /> Hands</> : <><FaMousePointer /> Mouse</>}
           </button>
           <div style={{ fontSize: '9px', marginTop: '3px', color: 'rgba(255, 255, 255, 0.4)' }}>
             {isGestureMode ? 'Move hands to fly & zoom' : 'Drag to rotate, scroll to zoom'}
@@ -195,17 +203,24 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
                 cursor: 'pointer',
                 fontSize: '11px',
                 transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '5px'
               }}
             >
-              {enableTwoHandRotation ? '✅ Enabled' : '❌ Disabled'}
+              {enableTwoHandRotation ? <><FaCheck /> Enabled</> : <><FaBan /> Disabled</>}
             </button>
             <div style={{ fontSize: '9px', marginTop: '3px', color: 'rgba(255, 255, 255, 0.4)' }}>
               {enableTwoHandRotation ? 'GRAB gesture rotates galaxy' : 'GRAB gesture disabled'}
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   )
 }
+
+
 

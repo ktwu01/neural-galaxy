@@ -109,6 +109,8 @@
 - Polished the UI panels (`GestureInfoPanel` and "Settings Panel") with a softer, more modern aesthetic.
 - Made the `GestureInfoPanel` draggable and set its default position to top-left.
 - Hid several controls in the "Settings Panel" to simplify the UI.
+- Fixed `ReferenceError: enableHeadTracking is not defined` in `App.jsx`.
+- Fixed the `ControlPanel` visibility and interaction issue.
 
 **Next Action:** Awaiting user direction on next priorities.
 
