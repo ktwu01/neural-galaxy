@@ -5,15 +5,15 @@ Then we should follow the best practice in @jarvis.
 ## Middle
 
 - [ ] Add import bottom and preprocess part via browser/connect seamlessly
-    - [ ] you LLM split this task!!!
+    - [ ] Design UI for file upload/import button
+    - [ ] Implement file reader for chat history formats (JSON, CSV, TXT)
+    - [ ] Add data validation and error handling for imported files
+    - [ ] Implement preprocessing pipeline (tokenization, embedding generation)
+    - [ ] Add progress indicator for import/preprocessing workflow
+    - [ ] Update galaxy data structure to accept dynamically imported data
+    - [ ] Test end-to-end import workflow with sample data
 
 - [ ] As many of the users, they might have like 100 conversations, so this such low number might not be very suitable for creating a nebula or a galaxy. So how about   change our method of considering like ungroup our conversation instead we make a   large word galaxy instead of conversation galaxy. Like each word has its own   particle.
-
-## UI Enhancements:
-- [ ] Make "Neural Galaxy" title very highlighted (larger, shining font).
-- [ ] Move GitHub repo Fork/Star links to be next to the "Neural Galaxy" title.
-- [x] Move social icons (LinkedIn, X, GitHub profile) to be next to the "Settings" toggle icon (outside the panel), and make them clickable.
-- [x] Set "Settings Panel" to be folded (closed) by default.
 
 ## Small
 - [ ] Each individual particle should be more separated spatially. We should have a control panel in the right To control this parameter\(if its techinally easy)
@@ -55,3 +55,9 @@ by default: freeze (no rotate, no travel)
 
 - [x] SEO: Add LinkedIn (https://www.linkedin.com/in/ktwu01/), X (https://x.com/ktwu01), GitHub Profile (https://github.com/ktwu01/), and GitHub Repo (https://github.com/ktwu01/neural-galaxy) links.
 Oh what the fucking shit. It's definitely stupid retard to use emojis as icons. use best practice: use favicons   
+
+## UI Enhancements:
+- [x] Make "Neural Galaxy" title very highlighted (larger, shining font).
+- [x] Move GitHub repo Fork/Star links to be next to the "Neural Galaxy" title.
+- [x] Move social icons (LinkedIn, X, GitHub profile) to be next to the "Settings" toggle icon (outside the panel), and make them clickable.
+- [x] Set "Settings Panel" to be folded (closed) by default.

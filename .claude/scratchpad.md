@@ -60,7 +60,48 @@
 - ✅ Ensured the 3D universe is full screen by removing root padding/margins.
 - ✅ Made the minimap circular.
 
-### Phase 4: Future Enhancements (DEFERRED)
+### Phase 4: Import & Dynamic Data (MEDIUM PRIORITY)
+**Goal:** Allow users to import their own chat history and generate personalized galaxies
+
+**Tasks:**
+- [ ] Design UI for file upload/import button
+- [ ] Implement file reader for chat history formats (JSON, CSV, TXT)
+- [ ] Add data validation and error handling for imported files
+- [ ] Implement preprocessing pipeline (tokenization, embedding generation)
+- [ ] Add progress indicator for import/preprocessing workflow
+- [ ] Update galaxy data structure to accept dynamically imported data
+- [ ] Test end-to-end import workflow with sample data
+
+### Phase 5: Word-Based Galaxy Architecture (MEDIUM PRIORITY)
+**Goal:** Scale system to handle 100+ conversations by shifting from conversation-based to word-based particles
+
+**Rationale:** Current conversation-based approach doesn't scale well for users with extensive chat histories
+
+**Tasks:**
+- [ ] Design word-based particle architecture
+- [ ] Implement word tokenization and clustering
+- [ ] Update UMAP embedding strategy for word-level data
+- [ ] Test performance with large word datasets
+- [ ] Migration strategy from conversation-based to word-based
+
+### Phase 6: Control Panel Enhancements (LOW PRIORITY)
+**Goal:** Add spatial controls for particle distribution
+
+**Tasks:**
+- [ ] Add particle spatial separation slider
+- [ ] Add cluster color separation slider
+- [ ] Update Galaxy.jsx to support dynamic spatial parameters
+- [ ] Test visual impact of parameter changes
+
+### Phase 7: Hand Tracking Bug Fixes (LOW PRIORITY)
+**Issue:** Left/right hand flip - text displays correctly but hand skeleton image needs to be mirrored
+
+**Tasks:**
+- [ ] Debug HandCursor.jsx mirroring logic
+- [ ] Ensure text labels remain correct after image flip
+- [ ] Test with both hands simultaneously
+
+### Phase 8: Future Enhancements (DEFERRED)
 - [ ] Starfield background
 - [ ] Loading states
 - [ ] Better particle effects
@@ -70,15 +111,19 @@
 
 ## Project Status Board
 
-**Current Phase:** Phase 4: Future Enhancements
+**Current Phase:** Phase 4-7 Planning
 
-**Priority Order:**
-1. 🟡 **HIGH:** Two-Hand Support (P3)
-2. 🟢 **MEDIUM:** Gesture Commands (P4-P7)
-3. 🔵 **LOW:** Polish & UX (P8-P10)
+**Priority Order (from TODO.md):**
+1. 🔴 **CRITICAL:** Follow best practice in @jarvis (needs clarification)
+2. 🟡 **MEDIUM:**
+   - Import & Dynamic Data (Phase 4)
+   - Word-Based Galaxy Architecture (Phase 5)
+3. 🔵 **LOW:**
+   - Control Panel Enhancements (Phase 6)
+   - Hand Tracking Bug Fixes (Phase 7)
 
 ### In Progress
-- None (awaiting user direction)
+- ✅ Icon sizing and layout adjustments (completed 2025-11-25)
 
 ### Completed Milestones
 ✅ **Phase 3A: UI/UX Polish**
@@ -103,16 +148,41 @@
 
 **Last Updated:** 2025-11-25
 
-**Latest Completed Work:**
-- Implemented a real-time minimap, now circular, in the bottom-left corner.
-- Achieved a full-screen 3D universe by removing unnecessary padding/margins.
-- Polished the UI panels (`GestureInfoPanel` and "Settings Panel") with a softer, more modern aesthetic.
-- Made the `GestureInfoPanel` draggable and set its default position to top-left.
-- Hid several controls in the "Settings Panel" to simplify the UI.
-- Fixed `ReferenceError: enableHeadTracking is not defined` in `App.jsx`.
-- Fixed the `ControlPanel` visibility and interaction issue.
+**Latest Completed Work - UI Best Practices Implementation:**
 
-**Next Action:** Awaiting user direction on next priorities.
+**Accessibility Improvements:**
+1. ✅ Added keyboard shortcuts panel (H key or ? to toggle)
+2. ✅ Implemented proper ARIA labels on all interactive elements
+3. ✅ Added aria-live regions for dynamic content (FocusPanel)
+4. ✅ Added keyboard focus indicators (2px cyan outline) on all buttons
+5. ✅ Semantic HTML improvements (nav, h1, button tags)
+6. ✅ Added role="application" to main container
+7. ✅ Added role="dialog" with aria-modal for help panel
+
+**Keyboard Shortcuts Enhancements:**
+- ✅ K: Open focused particle details
+- ✅ ESC: Close panels/HUD (hierarchical)
+- ✅ M: Toggle Mouse/Hands mode
+- ✅ H: Toggle keyboard help panel
+- ✅ Input field detection (shortcuts disabled while typing)
+
+**UI/UX Enhancements:**
+1. ✅ Floating keyboard help button (bottom-right)
+2. ✅ Hover effects on all interactive elements (opacity, scale)
+3. ✅ Focus states with proper outline styling
+4. ✅ Improved button accessibility (aria-pressed, aria-expanded)
+5. ✅ Better link accessibility with descriptive aria-labels
+6. ✅ Visual feedback on all interactions
+
+**Icon & Layout Fixes:**
+- ✅ Fixed ControlPanel.jsx JSX syntax error
+- ✅ Standardized all icon sizes to 24px
+- ✅ Made settings icon inline with social icons
+- ✅ Settings panel dropdown animation
+
+**Dev Server:** Running at http://localhost:5175/
+
+**Next Action:** Awaiting user testing and feedback on UI improvements
 
 ## Lessons Learned
 
@@ -162,3 +232,32 @@ const camera = new Camera(videoElement, {
 **Issue:** galaxy_data.json contains personal chat history
 **Solution:** Added to .gitignore, removed from tracking
 **Note:** Still exists in git history (commit 407faaf) - acceptable risk
+
+### UI/UX Best Practices for React Three Fiber (2025-11-25)
+
+**Key Patterns:**
+1. **Overlay UI:** Use HTML/CSS absolutely positioned over Canvas, not WebGL rendering
+2. **Accessibility First:**
+   - Always add ARIA labels (aria-label, aria-pressed, aria-expanded)
+   - Implement keyboard focus indicators (2px outline with high contrast)
+   - Use semantic HTML (nav, h1, button, not just div)
+   - Add role attributes (dialog, status, application)
+   - Implement aria-live regions for dynamic content
+3. **Keyboard Shortcuts:**
+   - Document all shortcuts in help panel
+   - Disable shortcuts when user is typing in inputs
+   - Use hierarchical ESC behavior (close innermost panel first)
+4. **Focus Management:**
+   - Visible focus states on all interactive elements
+   - Proper tab order (logical reading sequence)
+   - Focus programmatically when opening modals
+5. **Visual Feedback:**
+   - Hover effects (opacity, scale transitions)
+   - Active states for buttons
+   - Smooth transitions (0.2-0.3s ease)
+
+**Tools Used:**
+- ARIA attributes for screen readers
+- CSS :focus-visible for keyboard navigation
+- Semantic HTML5 elements
+- React state for keyboard help panel

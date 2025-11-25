@@ -14,19 +14,40 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
       }}
     >
       {/* Settings Icon / Toggle, always visible and clickable */}
-      <div
+      <button
         onClick={() => setIsExpanded(!isExpanded)}
+        aria-label={isExpanded ? 'Close Settings' : 'Open Settings'}
+        aria-expanded={isExpanded}
         style={{
           cursor: 'pointer',
           color: '#00ffff',
           fontSize: '24px',
           lineHeight: '1',
-          zIndex: 101, // Above the panel content
+          zIndex: 101,
+          background: 'none',
+          border: 'none',
+          padding: '0',
+          transition: 'opacity 0.2s, transform 0.2s',
+          outline: 'none',
         }}
-        title={isExpanded ? 'Close Settings' : 'Open Settings'}
+        onMouseEnter={(e) => {
+          e.target.style.opacity = '0.7'
+          e.target.style.transform = 'scale(1.1)'
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.opacity = '1'
+          e.target.style.transform = 'scale(1)'
+        }}
+        onFocus={(e) => {
+          e.target.style.outline = '2px solid #00ffff'
+          e.target.style.outlineOffset = '4px'
+        }}
+        onBlur={(e) => {
+          e.target.style.outline = 'none'
+        }}
       >
         {isExpanded ? <FaTimes /> : <FaCog />}
-      </div>
+      </button>
 
       {/* Panel Content, visibility is toggled */}
       <div
@@ -74,6 +95,8 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
           </label>
           <button
             onClick={onToggleGestureMode}
+            aria-label={`Control mode: ${isGestureMode ? 'Hands' : 'Mouse'}. Click to toggle`}
+            aria-pressed={isGestureMode}
             style={{
               width: '100%',
               padding: '6px',
@@ -87,7 +110,15 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '5px'
+              gap: '5px',
+              outline: 'none',
+            }}
+            onFocus={(e) => {
+              e.target.style.outline = '2px solid #00ffff'
+              e.target.style.outlineOffset = '2px'
+            }}
+            onBlur={(e) => {
+              e.target.style.outline = 'none'
             }}
           >
             {isGestureMode ? <><FaHands /> Hands</> : <><FaMousePointer /> Mouse</>}
@@ -115,6 +146,7 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
               step="10"
               value={flySpeed}
               onChange={(e) => onFlySpeedChange(parseFloat(e.target.value))}
+              aria-label={`Fly speed: ${flySpeed} units per second`}
               style={{
                 width: '100%',
                 height: '3px',
@@ -156,6 +188,7 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
               step="50"
               value={boundaryDistance}
               onChange={(e) => onBoundaryDistanceChange(parseFloat(e.target.value))}
+              aria-label={`Boundary distance: ${boundaryDistance} units`}
               style={{
                 width: '100%',
                 accentColor: '#00ffff',
@@ -193,6 +226,8 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
             </label>
             <button
               onClick={onToggleTwoHandRotation}
+              aria-label={`Two-hand rotation: ${enableTwoHandRotation ? 'Enabled' : 'Disabled'}. Click to toggle`}
+              aria-pressed={enableTwoHandRotation}
               style={{
                 width: '100%',
                 padding: '6px',
@@ -206,7 +241,15 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '5px'
+                gap: '5px',
+                outline: 'none',
+              }}
+              onFocus={(e) => {
+                e.target.style.outline = '2px solid #00ffff'
+                e.target.style.outlineOffset = '2px'
+              }}
+              onBlur={(e) => {
+                e.target.style.outline = 'none'
               }}
             >
               {enableTwoHandRotation ? <><FaCheck /> Enabled</> : <><FaBan /> Disabled</>}
