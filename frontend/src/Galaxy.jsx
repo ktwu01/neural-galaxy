@@ -1,9 +1,9 @@
-import { useEffect, useState, useRef, useMemo } from 'react'
+import { useEffect, useState, useRef, useMemo, forwardRef, useImperativeHandle } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { FocusHighlight } from './FocusHighlight'
 
-export function Galaxy({ onParticleClick, onFocusChange, focusedParticle, rotationSpeed = 0.005, isGestureMode = false, galaxyRotation = { x: 0, y: 0 } }) {
+export const Galaxy = forwardRef(({ onParticleClick, onFocusChange, focusedParticle, rotationSpeed = 0.005, isGestureMode = false, galaxyRotation = { x: 0, y: 0 } }, ref) => {
   const [galaxyData, setGalaxyData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -12,6 +12,11 @@ export function Galaxy({ onParticleClick, onFocusChange, focusedParticle, rotati
   const mouse = useRef(new THREE.Vector2())
   const lastCameraPosition = useRef(new THREE.Vector3())
   const { camera, gl } = useThree()
+
+  useImperativeHandle(ref, () => ({
+    getGalaxyData: () => galaxyData,
+    getPointsRef: () => pointsRef.current,
+  }));
 
   // Configure raycaster for point cloud - increased threshold for better detection at distance
   raycaster.current.params.Points.threshold = 10
@@ -332,4 +337,4 @@ export function Galaxy({ onParticleClick, onFocusChange, focusedParticle, rotati
       )}
     </>
   )
-}
+});

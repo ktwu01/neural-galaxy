@@ -30,14 +30,14 @@ export const GESTURE_CONFIG = {
   maxFlySpeed: 200,
   
   // Boundary detection (3D free zone)
-  defaultBoundaryDistance: 300, // Default: 2x larger than original 150
+  defaultBoundaryDistance: 500, // Default (used by App.jsx state)
   minBoundaryDistance: 100,     // Min: close boundary
-  maxBoundaryDistance: 1000,    // Max: very large boundary
+  maxBoundaryDistance: 2000,    // Max: very large boundary
   boundaryPushBackStrength: 0.5,
   
   // Edge detection for rotation (prevent mis-rotation near screen edges)
-  defaultEdgeThreshold: 0.15, // Default: ignore rotation if hand is within 15% of screen edge
-  minEdgeThreshold: 0.05,     // Min: 5% (very sensitive)
+  defaultEdgeThreshold: 0.10, // Default: ignore rotation if hand is within 10% of screen edge (90% effective)
+  minEdgeThreshold: 0.02,     // Min: 2% (very sensitive)
   maxEdgeThreshold: 0.4,      // Max: 40% (large dead zone)
   
   // Hand tracking

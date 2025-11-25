@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import { Galaxy } from './Galaxy'
@@ -8,6 +8,8 @@ import { ControlPanel } from './ControlPanel'
 import { GestureController } from './GestureController'
 import { HandCursor } from './HandCursor'
 import { GestureInfoPanel } from './GestureInfoPanel'
+import Minimap, { MinimapUpdater } from './Minimap'
+import { GESTURE_CONFIG } from './config'
 import './App.css'
 
 function App() {
@@ -15,11 +17,11 @@ function App() {
   const [focusedParticle, setFocusedParticle] = useState(null)
   const [rotationSpeed, setRotationSpeed] = useState(0.005)
   const [isGestureMode, setIsGestureMode] = useState(true)
-  const [flySpeed, setFlySpeed] = useState(90) // Base fly speed (3x from 30)
+  const [flySpeed, setFlySpeed] = useState(GESTURE_CONFIG.defaultFlySpeed)
   const [enableTwoHandRotation, setEnableTwoHandRotation] = useState(false) // Disabled by default
-  const [enableHeadTracking, setEnableHeadTracking] = useState(true) // Direction control enabled by default
-  const [edgeThreshold, setEdgeThreshold] = useState(0.15) // 15% edge threshold (2x smaller than 0.2)
-  const [boundaryDistance, setBoundaryDistance] = useState(300) // 3D free zone boundary (2x larger than original 150)
+  const [enableHeadTracking, setEnableHeadTracking] = useState(GESTURE_CONFIG.enableHeadTracking)
+  const [edgeThreshold, setEdgeThreshold] = useState(GESTURE_CONFIG.defaultEdgeThreshold)
+  const [boundaryDistance, setBoundaryDistance] = useState(GESTURE_CONFIG.defaultBoundaryDistance)
   
   // Debug State for Gesture Mode
   const [debugData, setDebugData] = useState({ landmarks: null, gesture: null, status: null })
@@ -33,7 +35,8 @@ function App() {
     right: { visible: false, position: null, gesture: 'IDLE' }
   })
 
-
+  const galaxyRef = useRef();
+  const minimapCanvasRef = useRef();
 
 
   // Handle keyboard shortcuts
@@ -66,6 +69,7 @@ function App() {
 
         {/* The galaxy particle system */}
         <Galaxy
+          ref={galaxyRef}
           onParticleClick={null}
           onFocusChange={setFocusedParticle}
           focusedParticle={focusedParticle}
@@ -96,6 +100,7 @@ function App() {
             maxDistance={500}
           />
         )}
+        <MinimapUpdater galaxyRef={galaxyRef} minimapCanvasRef={minimapCanvasRef} />
       </Canvas>
       
 
@@ -166,8 +171,11 @@ function App() {
         </>
       )}
 
-      {/* Gesture Info Panel (bottom-left) */}
+      {/* Gesture Info Panel */}
       <GestureInfoPanel isGestureMode={isGestureMode} />
+
+      {/* Minimap */}
+      <Minimap ref={minimapCanvasRef} />
     </div>
   )
 }
