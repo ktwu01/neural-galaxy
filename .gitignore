@@ -118,7 +118,6 @@ dist
 
 # Personal Files
 data/
-docs/
 data/*.json
 frontend/public/galaxy_data.json
 *.json
