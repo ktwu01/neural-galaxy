@@ -8,7 +8,7 @@ import { GESTURE_CONFIG } from './config';
 // Helper for smoothing
 const lerp = (start, end, factor) => start + (end - start) * factor;
 
-export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHandsUpdate, flySpeed = 90, enableTwoHandRotation = false }) => {
+export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHandsUpdate, flySpeed = 90, enableTwoHandRotation = false, enableHeadTracking = true, edgeThreshold = 0.15, boundaryDistance = 300 }) => {
   const { camera } = useThree();
   const videoRef = useRef(null);
   const isMountedRef = useRef(true);
@@ -20,6 +20,22 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
   const prevPinchDist = useRef(null); // Track distance between hands
   const prevHandPos = useRef(null); // Track hand position for drag
   const galaxyRotation = useRef({ x: 0, y: 0 }); // Galaxy rotation (for grab)
+  
+  // Use refs for props that need to be accessed in callbacks (closure fix)
+  const enableHeadTrackingRef = useRef(enableHeadTracking);
+  const enableTwoHandRotationRef = useRef(enableTwoHandRotation);
+  const edgeThresholdRef = useRef(edgeThreshold);
+  const flySpeedRef = useRef(flySpeed);
+  const boundaryDistanceRef = useRef(boundaryDistance);
+  
+  // Update refs when props change
+  useEffect(() => {
+    enableHeadTrackingRef.current = enableHeadTracking;
+    enableTwoHandRotationRef.current = enableTwoHandRotation;
+    edgeThresholdRef.current = edgeThreshold;
+    flySpeedRef.current = flySpeed;
+    boundaryDistanceRef.current = boundaryDistance;
+  }, [enableHeadTracking, enableTwoHandRotation, edgeThreshold, flySpeed, boundaryDistance]);
   
   useEffect(() => {
     isMountedRef.current = true;
@@ -69,18 +85,20 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
         }
       }
 
-      // Update hand UI cursors
+      // Update hand UI cursors with full landmark data for skeleton drawing
       if (onHandsUpdate) {
         onHandsUpdate({
           left: {
             visible: !!leftHand,
             position: leftHand ? { x: leftHand[9].x, y: leftHand[9].y } : null,
-            gesture: leftGesture
+            gesture: leftGesture,
+            landmarks: leftHand // Full landmark array for skeleton drawing
           },
           right: {
             visible: !!rightHand,
             position: rightHand ? { x: rightHand[9].x, y: rightHand[9].y } : null,
-            gesture: rightGesture
+            gesture: rightGesture,
+            landmarks: rightHand // Full landmark array for skeleton drawing
           }
         });
       }
@@ -89,7 +107,9 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
       targetVelocity.current = 0;
 
       // 1. TWO-HAND MODE: ONLY ZOOM (no travel, no rotate)
+      // Debug: Log when two hands detected
       if (leftHand && rightHand) {
+        console.log('TWO HANDS DETECTED - Zoom mode, travel frozen');
         const leftIndex = leftHand[8]; // Index finger tip
         const rightIndex = rightHand[8];
         const dist = Math.hypot(
@@ -140,21 +160,58 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
           // Use palm center (landmark 9) for tracking
           const palmCenter = { x: activeHand[9].x, y: activeHand[9].y };
 
-          // TRAVEL CONTROL: GRAB = forward, VICTORY = backward
-          if (gesture === "GRAB") {
-            targetVelocity.current = GESTURE_CONFIG.grabVelocity; // GRAB = Fly forward
+          // HEAD TRACKING: Natural direction control via hand position
+          if (enableHeadTrackingRef.current) {
+            // Map hand position (0-1) to rotation angles
+            // Center dead zone (20%) = look straight ahead
+            // Outside center = rotate toward hand position
+            const centerX = 0.5;
+            const centerY = 0.5;
+            const deadZone = GESTURE_CONFIG.headTrackingDeadZone;
+            const sensitivity = GESTURE_CONFIG.headTrackingSensitivity;
+            
+            // Calculate distance from center
+            const offsetX = palmCenter.x - centerX;
+            const offsetY = palmCenter.y - centerY;
+            const distanceFromCenter = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+            
+            // Check if hand is in center dead zone (20% radius)
+            if (distanceFromCenter < deadZone) {
+              // FREEZE: Hand in center - look straight ahead
+              targetRotation.current.x = 0;
+              targetRotation.current.y = 0;
+            } else {
+              // ROTATE: Hand outside center - rotate toward hand position
+              // Apply sensitivity only to the portion outside dead zone
+              const effectiveDistance = (distanceFromCenter - deadZone) / (0.5 - deadZone);
+              const multiplier = Math.min(effectiveDistance, 1.0) * sensitivity;
+              
+              targetRotation.current.y = offsetX * multiplier * Math.PI; // Yaw (left/right)
+              targetRotation.current.x = -offsetY * multiplier * Math.PI; // Pitch (up/down), inverted
+            }
+          } else {
+            // Head tracking disabled: look straight ahead
+            targetRotation.current.x = 0;
+            targetRotation.current.y = 0;
+          }
+
+          // TRAVEL CONTROL: GRAB/PINCH = forward, VICTORY = backward
+          console.log('Detected gesture:', gesture, 'Hands:', leftHand ? 'L' : '', rightHand ? 'R' : '');
+          
+          if (gesture === "GRAB" || gesture === "PINCH") {
+            targetVelocity.current = GESTURE_CONFIG.grabVelocity; // GRAB/PINCH = Fly forward
           } else if (gesture === "VICTORY") {
             targetVelocity.current = GESTURE_CONFIG.victoryVelocity; // VICTORY = Fly backward
           } else {
             targetVelocity.current = GESTURE_CONFIG.idleVelocity; // FREEZE (no gesture = no movement)
           }
 
-          // ROTATION CONTROL: GRAB + enableTwoHandRotation = rotate
-          if (gesture === "GRAB" && enableTwoHandRotation) {
+          // ROTATION CONTROL: GRAB + enableTwoHandRotation = rotate galaxy
+          if (gesture === "GRAB" && enableTwoHandRotationRef.current) {
             // Edge detection: Ignore if hand is near screen edges (entering/leaving frame)
-            // palmCenter x,y are normalized (0-1), so check if > 0.8 or < 0.2
-            const isNearEdge = palmCenter.x < 0.2 || palmCenter.x > 0.8 || 
-                               palmCenter.y < 0.2 || palmCenter.y > 0.8;
+            // palmCenter x,y are normalized (0-1), use configurable threshold
+            const isNearEdge = palmCenter.x < edgeThresholdRef.current || palmCenter.x > (1 - edgeThresholdRef.current) || 
+                               palmCenter.y < edgeThresholdRef.current || palmCenter.y > (1 - edgeThresholdRef.current);
             
             if (!isNearEdge && prevHandPos.current) {
               const deltaX = palmCenter.x - prevHandPos.current.x;
@@ -181,10 +238,16 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
             prevHandPos.current = null;
           }
         } else {
-          // No hands detected: FREEZE everything
+          // No hands detected: FREEZE everything and look straight ahead
           onDebugData({ status: "Searching for hands... (Frozen)" });
           targetVelocity.current = 0;
           prevHandPos.current = null;
+          
+          // Reset camera rotation to look straight ahead when no hands
+          if (!enableHeadTrackingRef.current) {
+            targetRotation.current.x = 0;
+            targetRotation.current.y = 0;
+          }
         }
       }
     });
@@ -213,16 +276,17 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
 
   // 4. The Render Loop (Runs at 60/120 FPS)
   useFrame((state, delta) => {
-    // A. Apply Smoothing (Lerp)
-    camera.rotation.x = lerp(camera.rotation.x, targetRotation.current.x, 5 * delta);
-    camera.rotation.y = lerp(camera.rotation.y, targetRotation.current.y, 5 * delta);
+    // A. Apply Smoothing (Lerp) for camera rotation
+    const rotationSpeed = enableHeadTrackingRef.current ? 3 : 5; // Slower for smoother direction control
+    camera.rotation.x = lerp(camera.rotation.x, targetRotation.current.x, rotationSpeed * delta);
+    camera.rotation.y = lerp(camera.rotation.y, targetRotation.current.y, rotationSpeed * delta);
     
     // A2. Apply FOV smoothing (zoom)
     camera.fov = lerp(camera.fov, targetFOV.current, 3 * delta);
     camera.updateProjectionMatrix(); // Required after FOV change
     
     // B. Apply Forward Movement
-    const speed = flySpeed; // Units per second (controllable via prop)
+    const speed = flySpeedRef.current; // Units per second (controllable via prop)
     const currentSpeed = lerp(0, speed * targetVelocity.current, 0.1); // Smooth acceleration
     
     if (Math.abs(currentSpeed) > 0.1) {
@@ -231,8 +295,8 @@ export const GestureController = ({ onDebugData, onGalaxyRotationChange, onHands
 
     // C. Boundary Detection & Bounce
     // Galaxy data spans roughly -25 to +25 in each axis (50 units total)
-    // Set boundary at configured distance (comfortable viewing distance)
-    const maxDistance = GESTURE_CONFIG.maxBoundaryDistance;
+    // Use configurable boundary distance (3D free zone)
+    const maxDistance = boundaryDistanceRef.current;
     const distanceFromOrigin = Math.sqrt(
       camera.position.x ** 2 + 
       camera.position.y ** 2 + 

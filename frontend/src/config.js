@@ -29,9 +29,16 @@ export const GESTURE_CONFIG = {
   minFlySpeed: 10,
   maxFlySpeed: 200,
   
-  // Boundary detection
-  maxBoundaryDistance: 150, // Bounce back at this distance from origin
+  // Boundary detection (3D free zone)
+  defaultBoundaryDistance: 300, // Default: 2x larger than original 150
+  minBoundaryDistance: 100,     // Min: close boundary
+  maxBoundaryDistance: 1000,    // Max: very large boundary
   boundaryPushBackStrength: 0.5,
+  
+  // Edge detection for rotation (prevent mis-rotation near screen edges)
+  defaultEdgeThreshold: 0.15, // Default: ignore rotation if hand is within 15% of screen edge
+  minEdgeThreshold: 0.05,     // Min: 5% (very sensitive)
+  maxEdgeThreshold: 0.4,      // Max: 40% (large dead zone)
   
   // Hand tracking
   videoWidth: 320,
@@ -48,6 +55,11 @@ export const GESTURE_CONFIG = {
   victoryVelocity: -3.0,   // Backward (VICTORY gesture)
   palmOpenVelocity: 0.0,   // Freeze (PALM_OPEN gesture)
   idleVelocity: 0.0,       // Freeze (no gesture detected)
+  
+  // Head tracking (natural direction control)
+  enableHeadTracking: true, // Use hand position to control camera direction
+  headTrackingSensitivity: 0.4, // How much hand movement affects camera rotation (0.1-2.0)
+  headTrackingDeadZone: 0.3,    // Center dead zone (30% = freeze rotation, larger for stability)
 };
 
 // ============================================================

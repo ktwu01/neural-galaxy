@@ -6,8 +6,8 @@ import { ParticleHUD } from './ParticleHUD'
 import { FocusPanel } from './FocusPanel'
 import { ControlPanel } from './ControlPanel'
 import { GestureController } from './GestureController'
-import { DebugHandOverlay } from './DebugHandOverlay'
 import { HandCursor } from './HandCursor'
+import { GestureInfoPanel } from './GestureInfoPanel'
 import './App.css'
 
 function App() {
@@ -17,6 +17,9 @@ function App() {
   const [isGestureMode, setIsGestureMode] = useState(true)
   const [flySpeed, setFlySpeed] = useState(90) // Base fly speed (3x from 30)
   const [enableTwoHandRotation, setEnableTwoHandRotation] = useState(false) // Disabled by default
+  const [enableHeadTracking, setEnableHeadTracking] = useState(true) // Direction control enabled by default
+  const [edgeThreshold, setEdgeThreshold] = useState(0.15) // 15% edge threshold (2x smaller than 0.2)
+  const [boundaryDistance, setBoundaryDistance] = useState(300) // 3D free zone boundary (2x larger than original 150)
   
   // Debug State for Gesture Mode
   const [debugData, setDebugData] = useState({ landmarks: null, gesture: null, status: null })
@@ -79,6 +82,9 @@ function App() {
              onHandsUpdate={setHandsUI}
              flySpeed={flySpeed}
              enableTwoHandRotation={enableTwoHandRotation}
+             enableHeadTracking={enableHeadTracking}
+             edgeThreshold={edgeThreshold}
+             boundaryDistance={boundaryDistance}
            />
         ) : (
           <OrbitControls
@@ -92,15 +98,6 @@ function App() {
         )}
       </Canvas>
       
-      {/* Debug Overlay for Gesture Mode */}
-      {isGestureMode && (
-          <DebugHandOverlay 
-            leftHand={debugData.leftHand}
-            rightHand={debugData.rightHand}
-            status={debugData.status}
-            gesture={debugData.gesture}
-          />
-      )}
 
       {/* UI Overlay - Instructions */}
       {!selectedParticle && (
@@ -115,9 +112,9 @@ function App() {
           textShadow: '0 0 4px rgba(0,0,0,0.8)'
         }}>
           <div>🌌 Neural Galaxy</div>
-          <div style={{ fontSize: '12px', opacity: 0.7, marginTop: '8px' }}>
+          {/* <div style={{ fontSize: '12px', opacity: 0.7, marginTop: '8px' }}>
             Drag to rotate | Scroll to zoom | Press K to open
-          </div>
+          </div> */}
         </div>
       )}
 
@@ -138,21 +135,18 @@ function App() {
         onFlySpeedChange={setFlySpeed}
         isGestureMode={isGestureMode}
         onToggleGestureMode={() => setIsGestureMode(!isGestureMode)}
+        enableHeadTracking={enableHeadTracking}
+        onToggleHeadTracking={() => setEnableHeadTracking(!enableHeadTracking)}
         enableTwoHandRotation={enableTwoHandRotation}
         onToggleTwoHandRotation={() => setEnableTwoHandRotation(!enableTwoHandRotation)}
+        edgeThreshold={edgeThreshold}
+        onEdgeThresholdChange={setEdgeThreshold}
+        boundaryDistance={boundaryDistance}
+        onBoundaryDistanceChange={setBoundaryDistance}
       />
 
-      {/* Debug Overlay for Gesture Mode */}
-      {isGestureMode && (
-          <DebugHandOverlay 
-            leftHand={debugData.leftHand}
-            rightHand={debugData.rightHand}
-            status={debugData.status}
-            gesture={debugData.gesture}
-          />
-      )}
 
-      {/* Hand Cursors (Visual Feedback) */}
+      {/* Hand Skeleton Overlays (Visual Feedback) */}
       {isGestureMode && (
         <>
           <HandCursor 
@@ -160,15 +154,20 @@ function App() {
             position={handsUI.left.position}
             gesture={handsUI.left.gesture}
             visible={handsUI.left.visible}
+            landmarks={handsUI.left.landmarks}
           />
           <HandCursor 
             hand="right"
             position={handsUI.right.position}
             gesture={handsUI.right.gesture}
             visible={handsUI.right.visible}
+            landmarks={handsUI.right.landmarks}
           />
         </>
       )}
+
+      {/* Gesture Info Panel (bottom-left) */}
+      <GestureInfoPanel isGestureMode={isGestureMode} />
     </div>
   )
 }

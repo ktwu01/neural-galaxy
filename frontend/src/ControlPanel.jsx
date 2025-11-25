@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, onFlySpeedChange, isGestureMode, onToggleGestureMode, enableTwoHandRotation, onToggleTwoHandRotation }) {
+export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, onFlySpeedChange, isGestureMode, onToggleGestureMode, enableTwoHandRotation, onToggleTwoHandRotation, enableHeadTracking, onToggleHeadTracking, edgeThreshold, onEdgeThresholdChange, boundaryDistance, onBoundaryDistanceChange }) {
   const [isExpanded, setIsExpanded] = useState(false)
 
 
@@ -198,6 +198,79 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
           </div>
         )}
 
+        {/* Boundary Distance Slider (only show in gesture mode) */}
+        {isGestureMode && (
+          <div style={{ marginBottom: '25px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '12px',
+              marginBottom: '8px',
+              color: 'rgba(255, 255, 255, 0.7)',
+            }}>
+              Boundary Distance (3D Free Zone)
+            </label>
+            <input
+              type="range"
+              min="100"
+              max="1000"
+              step="50"
+              value={boundaryDistance}
+              onChange={(e) => onBoundaryDistanceChange(parseFloat(e.target.value))}
+              style={{
+                width: '100%',
+                accentColor: '#00ffff',
+              }}
+            />
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '10px',
+              color: 'rgba(255, 255, 255, 0.5)',
+              marginTop: '4px',
+            }}>
+              <span>Close (100)</span>
+              <span style={{ color: 'white' }}>{boundaryDistance} units</span>
+              <span>Far (1000)</span>
+            </div>
+            <div style={{ fontSize: '10px', marginTop: '4px', color: 'rgba(255, 255, 255, 0.5)' }}>
+              How far you can fly before bouncing back
+            </div>
+          </div>
+        )}
+
+        {/* Head Tracking Toggle (only show in gesture mode) */}
+        {isGestureMode && (
+          <div style={{ marginBottom: '25px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '12px',
+              marginBottom: '8px',
+              color: 'rgba(255, 255, 255, 0.7)',
+            }}>
+              Direction Control
+            </label>
+            <button
+              onClick={onToggleHeadTracking}
+              style={{
+                width: '100%',
+                padding: '8px',
+                background: enableHeadTracking ? 'rgba(100, 255, 100, 0.2)' : 'rgba(255, 100, 100, 0.2)',
+                border: enableHeadTracking ? '1px solid rgba(100, 255, 100, 0.5)' : '1px solid rgba(255, 100, 100, 0.5)',
+                borderRadius: '4px',
+                color: enableHeadTracking ? '#aaffaa' : '#ffaaaa',
+                cursor: 'pointer',
+                fontSize: '12px',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              {enableHeadTracking ? '✅ Enabled' : '❌ Disabled'}
+            </button>
+            <div style={{ fontSize: '10px', marginTop: '4px', color: 'rgba(255, 255, 255, 0.5)' }}>
+              {enableHeadTracking ? 'Center=straight, edges=turn' : 'Camera looks straight ahead'}
+            </div>
+          </div>
+        )}
+
         {/* Two-Hand Rotation Toggle (only show in gesture mode) */}
         {isGestureMode && (
           <div style={{ marginBottom: '25px' }}>
@@ -232,39 +305,6 @@ export function ControlPanel({ rotationSpeed, onRotationSpeedChange, flySpeed, o
         )}
 
         {/* Info Section */}
-        <div style={{
-          fontSize: '11px',
-          color: 'rgba(255, 255, 255, 0.5)',
-          lineHeight: '1.6',
-          marginTop: '20px',
-          paddingTop: '20px',
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-        }}>
-          <div style={{ marginBottom: '8px' }}>
-            <strong style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Galaxy Info:</strong>
-          </div>
-          <div>• 488 particles</div>
-          <div>• 5 semantic clusters</div>
-          <div>• UMAP projection (3D)</div>
-        </div>
-
-        {/* Advanced Settings Placeholder */}
-        <div style={{
-          marginTop: '20px',
-          padding: '12px',
-          background: 'rgba(255, 255, 255, 0.05)',
-          borderRadius: '8px',
-          fontSize: '11px',
-          color: 'rgba(255, 255, 255, 0.5)',
-        }}>
-          <div style={{ marginBottom: '6px', color: 'rgba(255, 255, 255, 0.7)' }}>
-            ⚠️ Advanced Settings
-          </div>
-          <div style={{ fontSize: '10px' }}>
-            Cluster tightness and particle separation adjustments require rebuilding the galaxy data. 
-            These controls will be added in a future update.
-          </div>
-        </div>
       </div>
     </div>
   )

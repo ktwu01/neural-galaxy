@@ -1,94 +1,101 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
+import { HAND_CONNECTIONS } from '@mediapipe/hands'
 
-export function HandCursor({ hand, position, gesture, visible }) {
-  if (!visible) return null
+export function HandCursor({ hand, position, gesture, visible, landmarks }) {
+  if (!visible || !landmarks) return null
+  
+  const canvasRef = useRef(null)
 
-  // Gesture-specific colors and sizes
-  const getGestureStyle = () => {
+  // Gesture-specific colors
+  const getGestureColor = () => {
     switch (gesture) {
-      case 'GRAB':
-        return { color: '#ff4444', size: 60, glow: '0 0 30px rgba(255, 68, 68, 0.8)' }
-      case 'PALM_OPEN':
-        return { color: '#44ff44', size: 80, glow: '0 0 40px rgba(68, 255, 68, 0.8)' }
-      case 'PINCH':
-        return { color: '#4444ff', size: 50, glow: '0 0 25px rgba(68, 68, 255, 0.8)' }
-      case 'VICTORY':
-        return { color: '#ff44ff', size: 70, glow: '0 0 35px rgba(255, 68, 255, 0.8)' }
-      case 'PINCH_SCALE':
-        return { color: '#ffaa00', size: 90, glow: '0 0 50px rgba(255, 170, 0, 0.9)' }
-      default:
-        return { color: '#00ffff', size: 40, glow: '0 0 20px rgba(0, 255, 255, 0.6)' }
+      case 'GRAB': return '#ff4444'
+      case 'PALM_OPEN': return '#44ff44'
+      case 'PINCH': return '#4444ff'
+      case 'VICTORY': return '#ff44ff'
+      case 'PINCH_SCALE': return '#ffaa00'
+      default: return '#00ffff'
     }
   }
 
-  const style = getGestureStyle()
+  const color = getGestureColor()
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas || !landmarks) return
+
+    const ctx = canvas.getContext('2d')
+    const width = window.innerWidth
+    const height = window.innerHeight
+    
+    canvas.width = width
+    canvas.height = height
+    
+    ctx.clearRect(0, 0, width, height)
+
+    // Scale factor to make hands smaller (0.5 = 50% size)
+    const scale = 0.5
+    const centerX = width / 2
+    const centerY = height / 2
+    
+    // Helper to scale coordinates toward center
+    const scalePoint = (point) => ({
+      x: centerX + ((1 - point.x) * width - centerX) * scale,
+      y: centerY + (point.y * height - centerY) * scale
+    })
+    
+    // Draw connections (lines between landmarks)
+    ctx.strokeStyle = color
+    ctx.lineWidth = 2
+    ctx.shadowBlur = 10
+    ctx.shadowColor = color
+    
+    HAND_CONNECTIONS.forEach(([start, end]) => {
+      const startScaled = scalePoint(landmarks[start])
+      const endScaled = scalePoint(landmarks[end])
+      
+      ctx.beginPath()
+      ctx.moveTo(startScaled.x, startScaled.y)
+      ctx.lineTo(endScaled.x, endScaled.y)
+      ctx.stroke()
+    })
+
+    // Draw landmark points
+    ctx.fillStyle = color
+    ctx.shadowBlur = 8
+    landmarks.forEach((point) => {
+      const scaled = scalePoint(point)
+      ctx.beginPath()
+      ctx.arc(scaled.x, scaled.y, 3, 0, 2 * Math.PI)
+      ctx.fill()
+    })
+
+    // Draw label at wrist position (landmark 0)
+    const wristScaled = scalePoint(landmarks[0])
+    ctx.shadowBlur = 5
+    ctx.fillStyle = color
+    ctx.font = 'bold 12px monospace'
+    ctx.textAlign = 'center'
+    ctx.fillText(
+      `${hand.toUpperCase()} • ${gesture}`,
+      wristScaled.x,
+      wristScaled.y - 15
+    )
+  }, [landmarks, color, hand, gesture])
 
   return (
-    <div
-      className="hand-cursor"
+    <canvas
+      ref={canvasRef}
       style={{
-        position: 'absolute',
-        // Mirror X coordinate (camera is mirrored)
-        left: `${(1 - position.x) * 100}%`,
-        top: `${position.y * 100}%`,
-        transform: 'translate(-50%, -50%)',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
         pointerEvents: 'none',
         zIndex: 100,
       }}
-    >
-      {/* Outer ring */}
-      <div
-        style={{
-          width: `${style.size}px`,
-          height: `${style.size}px`,
-          borderRadius: '50%',
-          border: `3px solid ${style.color}`,
-          boxShadow: style.glow,
-          animation: 'pulse 1.5s ease-in-out infinite',
-          position: 'relative',
-        }}
-      >
-        {/* Inner dot */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '12px',
-            height: '12px',
-            borderRadius: '50%',
-            backgroundColor: style.color,
-            boxShadow: `0 0 10px ${style.color}`,
-          }}
-        />
-        
-        {/* Hand label */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '-30px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            color: style.color,
-            fontSize: '12px',
-            fontFamily: 'monospace',
-            fontWeight: 'bold',
-            textShadow: `0 0 5px ${style.color}`,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {hand.toUpperCase()} • {gesture}
-        </div>
-      </div>
-
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-          50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); }
-        }
-      `}</style>
-    </div>
+    />
   )
 }
 
