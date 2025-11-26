@@ -14,7 +14,7 @@ universe—hand gestures, minimap, setup wizard, and one-click screenshots
 included.  
   
 Why this matters:  
-- Data stays *entirely* in your browser. Import ChatGPT/Claude/Gemini
+- Data stays *entirely* in your browser. Import ChatGPT
   exports privately and watch the galaxy reshape itself in real time.  
 - The hosted demo ships with a 488-point sample galaxy so anyone can fly
   through it instantly.  
@@ -43,19 +43,16 @@ personal knowledge management. 🌌
    screenshot. Demo + repo ↓”
 
 2. **Tweet 2**  
-   “✨ Highlights:  
-   • client-side imports (privacy-first)  
-   • setup wizard for ChatGPT/Claude/Gemini exports  
-   • gesture HUD + minimap + floating actions”
+   “Live demo (you can also use iPhone to see it!) on GitHub Pages: https://ktwu01.github.io/neural-galaxyClick "Import" to import your own chat history data for local-only process and visualization!”
 
 3. **Tweet 3**  
-   “Live demo (488 sample prompts) on GitHub Pages:
-   https://ktwu01.github.io/neural-galaxy  
-   Clone + `npm run dev` when you want to plug in your own data.”
+   “✨ Highlights:  
+   • client-side imports (privacy-first)  
+   • setup wizard for ChatGPT exports  
+   • gesture HUD + minimap + floating actions”
 
 4. **Tweet 4**  
-   “Inspired by @Suryansh777777’s Jarvis CV, @SarthakHuh’s Neural Visualizer,
-   and the OG soarxiv vibes. Feedback welcome! 🌠”
+   “Inspired by @Suryansh777777’s Jarvis CV, @SarthakHuh’s Neural Visualizer, and @jinaycodes's Soarxiv vibes. Feedback welcome!”
 
 ---
 
@@ -66,8 +63,6 @@ galaxy. Import your chat exports directly inside the browser (no backend,
 no data leaves your laptop) and explore clusters with a GTA-style minimap.
  
 🔹 Live demo & repo: https://github.com/ktwu01/neural-galaxy  
-🔹 Setup Guide shortcut: press `I` in the app  
-🔹 Screenshot shortcut: press `S` (3-second countdown)
  
 Credits: soarxiv, Jarvis-CV, and the Neural Visualizer concept by
 @SarthakHuh for the inspiration.

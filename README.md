@@ -89,4 +89,4 @@ Ideas, issues, and PRs are more than welcome—this is a living playground for e
 
 ## Acknowledgments
 
-- Inspiration from [soarxiv.org](https://soarxiv.org/), [Jarvis-CV](https://github.com/Suryansh777777/Jarvis-CV), and the “Neural Visualizer” concept by [@Sarthak](https://x.com/Sarthakhuh)
+- Inspired by [@Suryansh777777](https://x.com/Suryansh777777)’s [Jarvis-CV](https://github.com/Suryansh777777/Jarvis-CV), [@SarthakHuh](https://x.com/SarthakHuh)’s Neural Visualizer, and [@jinaycodes](https://x.com/jinaycodes)'s [soarxiv.org](https://soarxiv.org/). Feedback welcome!
