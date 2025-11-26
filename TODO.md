@@ -1,7 +1,5 @@
 ## Critical
 
-Deploy to GitHub/Amazon. 如果数量超过fifty MB的话，需要by me coffee any amount
-
 demo video
 
 SEO
@@ -13,7 +11,6 @@ SEO
 ## Small
 
 - [ ] 让cluster之间离得更远一些，现在的3倍. Different color clusters should be more separated spatially. We should have a control panel in a right to control this parameter.(... if it's easy.)
-
 
 ## Solved
 Then we should follow the best practice in @jarvis.
@@ -80,3 +77,5 @@ Oh what the fucking shit. It's definitely stupid retard to use emojis as icons. 
 - [x] data points大小由该points的words量决定
 
 - [x] 使用新的测试对话内容而非我自己的内容.
+
+- [x] Deploy to GitHub/Amazon. 如果数量超过fifty MB的话，需要by me coffee any amount

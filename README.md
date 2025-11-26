@@ -1,6 +1,8 @@
 # Neural Galaxy
 
-[![GitHub stars](https://img.shields.io/github/stars/ktwu01/neural-galaxy?style=social)](https://github.com/ktwu01/neural-galaxy/stargazers) [![GitHub forks](https://img.shields.io/github/forks/ktwu01/neural-galaxy?style=social)](https://github.com/ktwu01/neural-galaxy/fork) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/ktwu01/neural-galaxy/issues) ![License](https://img.shields.io/badge/License-MIT-informational.svg)
+[![Neural Galaxy demo](docs/neural-galaxy-demo.gif)](docs/neural-galaxy-demo.gif)
+
+[![GitHub stars](https://img.shields.io/github/stars/ktwu01/neural-galaxy?style=social)](https://github.com/ktwu01/neural-galaxy/stargazers) [![GitHub forks](https://img.shields.io/github/forks/ktwu01/neural-galaxy?style=social)](https://github.com/ktwu01/neural-galaxy/fork) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/ktwu01/neural-galaxy/issues) ![License](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-informational.svg)
 
 > A hand-controlled 3D map of your AI conversations—fly through every idea, screenshot your galaxy, and share the journey.
 

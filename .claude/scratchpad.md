@@ -79,9 +79,9 @@
 - [x] Implement preprocessing pipeline (tokenization, embedding generation)
       add Debug code so that it will show Via Google Chrome Console
       Let the user verify this process is correct
-- [ ] Add progress indicator for import/preprocessing workflow
-- [ ] Update galaxy data structure to accept dynamically imported data
-- [ ] Test end-to-end import workflow with sample data
+- [x] Add progress indicator for import/preprocessing workflow
+- [x] Update galaxy data structure to accept dynamically imported data
+- [x] Test end-to-end import workflow with sample data
 
 ### Phase 4A: Setup Guide & User Onboarding (HIGH PRIORITY)
 **Goal:** Guide first-time users to import their own chat history with clear instructions
@@ -172,23 +172,6 @@ Main App (with custom galaxy)
 - [ ] Update UMAP embedding strategy for word-level data
 - [ ] Test performance with large word datasets
 - [ ] Migration strategy from conversation-based to word-based
-
-### Phase 6: Control Panel Enhancements (LOW PRIORITY)
-**Goal:** Add spatial controls for particle distribution
-
-**Tasks:**
-- [ ] Add particle spatial separation slider
-- [ ] Add cluster color separation slider
-- [ ] Update Galaxy.jsx to support dynamic spatial parameters
-- [ ] Test visual impact of parameter changes
-
-### Phase 7: Hand Tracking Bug Fixes (LOW PRIORITY)
-**Issue:** Left/right hand flip - text displays correctly but hand skeleton image needs to be mirrored
-
-**Tasks:**
-- [ ] Debug HandCursor.jsx mirroring logic
-- [ ] Ensure text labels remain correct after image flip
-- [ ] Test with both hands simultaneously
 
 ### Phase 8: Future Enhancements (DEFERRED)
 - [ ] Starfield background
