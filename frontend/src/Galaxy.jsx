@@ -47,7 +47,8 @@ export const Galaxy = forwardRef(({ onParticleClick, onFocusChange, focusedParti
       processData(customGalaxyData);
     } else {
       console.log('[Galaxy.jsx] No custom data, loading default galaxy_data.json.');
-      fetch('/galaxy_data.json')
+      const base = import.meta.env.BASE_URL || '/'
+      fetch(`${base}galaxy_data.json`)
         .then(res => {
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           return res.json();
