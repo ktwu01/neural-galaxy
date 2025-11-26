@@ -82,3 +82,7 @@ Refreshing your browser is enough to see the regenerated dataset. Fine-tune clus
 ## Contributing & Support
 
 Ideas, issues, and PRs are more than welcome—this is a living playground for experimenting with personal data viz. Open a [GitHub issue](https://github.com/ktwu01/neural-galaxy/issues) if you run into trouble, or fork the repo and show us your own Neural Galaxy. 🚀
+
+## Acknowledgments
+
+- Inspiration from [soarxiv.org](https://soarxiv.org/), [Jarvis-CV](https://github.com/Suryansh777777/Jarvis-CV), and the “Neural Visualizer” concept by [@Sarthak](https://x.com/Sarthakhuh)
