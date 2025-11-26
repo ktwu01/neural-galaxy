@@ -86,24 +86,31 @@ demo-recording plan.
    “Hey friends, I’m Koutian—and this is what happens when you pour your AI
    brain dump into a galaxy.”
 
-2. **Both-Hands Zoom (15 s)**  
+2. **Single-Both-Hands Gestures (15 s)**  
    Show your hands on camera. “Watch this: two-hand pinch to zoom out and
    open the whole cosmos… pull the hands in to dive straight into a cluster.”
-   Narrate the minimap responding in real time.
+   
+   Single hand: 
+   “Now I switch to one hand—Grab sends me forward, flash a Victory sign to
+   fly backward, and watch the minimap redraw in real time while the focus
+   HUD chases my fingertips.”
 
-3. **Highlight the HUD (12 s)**  
-   “Every gesture gets mirrored down here—no guessing. The app runs the
-   MediaPipe model in-browser so nothing ever leaves your laptop.”
+3. **Show the Detector Feed (12 s)**  
+   Pop open devtools with `F12`. “See this panel? It’s streaming the hand
+   tracking logits live, so you can literally watch the MediaPipe detections
+   frame-by-frame—still all in-browser, nothing leaves my laptop.”
 
 4. **Setup Guide Magic (15 s)**  
    Hit `I`. “Importing my own chats is literally press-I-and-drag-a-file.
-   This wizard walks you through ChatGPT, Claude, or Gemini exports.”
+   This wizard walks you through ChatGPT exports.”
 
 5. **Screenshot Countdown (10 s)**  
    Smash `S`. “Need a shareable pic? Screenshot button drops a 3-second
    countdown, captures *everything*—panels, socials, copyright.”
 
-6. **Call-to-Action (8 s)**  
+6. settings (3s)
+
+7. **Call-to-Action (8 s)**  
    “Link in the description: live demo + GitHub instructions. Clone it,
    swap in your data, and send me your galaxy selfie.”
 
