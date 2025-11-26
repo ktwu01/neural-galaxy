@@ -1,8 +1,6 @@
 ## Critical
 
-
-
-Deploy to Amazon. 如果数量超过fifty MB的话，需要by me coffee any amount
+Deploy to GitHub/Amazon. 如果数量超过fifty MB的话，需要by me coffee any amount
 
 demo video
 
