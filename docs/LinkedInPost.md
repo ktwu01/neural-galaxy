@@ -74,33 +74,37 @@ demo-recording plan.
 
 ---
 
-## Demo Video Recording Script
+## Demo Video Recording Script (High-Energy)
 
-**Setup:** Screen recorder at 60 FPS, hide dock/taskbar, keep microphone on
-for narration. Use the hosted GitHub Pages demo (sample data) for speed.
+**Setup tips:**  
+- Record at 60 FPS, hide desktop clutter, and keep the webcam on so viewers
+  see your hands when you demo gestures.  
+- Use the hosted demo for reliability; switch to local build only if you
+  need custom data shots.
 
-1. **Intro (10s)**  
-   “Hey everyone, I’m Koutian. This is Neural Galaxy—a browser-first way to
-   explore your AI chat history like a sci-fi control room.”
+1. **Hook (8 s)**  
+   “Hey friends, I’m Koutian—and this is what happens when you pour your AI
+   brain dump into a galaxy.”
 
-2. **Launch + Overview (15s)**  
-   Show the homepage loading. “The live demo ships with 488 synthetic
-   prompts so you can fly around instantly.”
+2. **Both-Hands Zoom (15 s)**  
+   Show your hands on camera. “Watch this: two-hand pinch to zoom out and
+   open the whole cosmos… pull the hands in to dive straight into a cluster.”
+   Narrate the minimap responding in real time.
 
-3. **Gesture Toggle (15s)**  
-   Toggle gesture mode and show the HUD/minimap. Mention privacy: “Imports
-   never leave the browser; even this demo runs entirely on static hosting.”
+3. **Highlight the HUD (12 s)**  
+   “Every gesture gets mirrored down here—no guessing. The app runs the
+   MediaPipe model in-browser so nothing ever leaves your laptop.”
 
-4. **Setup Guide (15s)**  
-   Press `I` to open the wizard. “When you’re ready to use real ChatGPT or
-   Claude exports, the Setup Guide walks you through the format and handles
-   validation locally.”
+4. **Setup Guide Magic (15 s)**  
+   Hit `I`. “Importing my own chats is literally press-I-and-drag-a-file.
+   This wizard walks you through ChatGPT, Claude, or Gemini exports.”
 
-5. **Screenshot Feature (10s)**  
-   Press `S` to trigger the countdown + screenshot. Describe sharing the PNG.
+5. **Screenshot Countdown (10 s)**  
+   Smash `S`. “Need a shareable pic? Screenshot button drops a 3-second
+   countdown, captures *everything*—panels, socials, copyright.”
 
-6. **Call to Action (10s)**  
-   “The repo is on GitHub—clone it, import your data, and send me your
-   galaxy screenshots. Links in the description.”
+6. **Call-to-Action (8 s)**  
+   “Link in the description: live demo + GitHub instructions. Clone it,
+   swap in your data, and send me your galaxy selfie.”
 
-Total runtime: ~75 seconds.
+Total runtime: ~70 seconds, punchy and catch-worthy.
