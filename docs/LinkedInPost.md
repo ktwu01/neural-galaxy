@@ -8,30 +8,30 @@ demo-recording plan.
 
 ## LinkedIn Post (long-form)
 
-> 🚀 **Neural Galaxy is live on GitHub Pages**  
-> I spent the last sprint turning my 2025 AI chats into an explorable 3D
-> universe—hand gestures, minimap, setup wizard, and one-click screenshots
-> included.  
->   
-> Why this matters:  
-> - Data stays *entirely* in your browser. Import ChatGPT/Claude/Gemini
->   exports privately and watch the galaxy reshape itself in real time.  
-> - The hosted demo ships with a 488-point sample galaxy so anyone can fly
->   through it instantly.  
-> - Gesture mode + HUDs = a demo-ready wow factor for workshops and talks.
->   
-> Getting started is literally `npm run dev`. Or just visit the live demo,
-> press **I** for the Setup Guide, and drop your own JSON.  
->   
-> Shout-out to the inspirations that sparked this direction:
-> [soarxiv.org](https://soarxiv.org/), [Jarvis-CV](https://github.com/Suryansh777777/Jarvis-CV),
-> and [@Sarthak](https://x.com/Sarthakhuh) for the “Neural Visualizer”
-> concept.  
->   
-> Repo & demo: https://github.com/ktwu01/neural-galaxy  
->  
-> Would love feedback—especially from folks exploring spatial interfaces for
-> personal knowledge management. 🌌
+🚀 **Neural Galaxy is live on GitHub Pages**  
+I spent the last sprint turning my 2025 AI chats into an explorable 3D
+universe—hand gestures, minimap, setup wizard, and one-click screenshots
+included.  
+  
+Why this matters:  
+- Data stays *entirely* in your browser. Import ChatGPT/Claude/Gemini
+  exports privately and watch the galaxy reshape itself in real time.  
+- The hosted demo ships with a 488-point sample galaxy so anyone can fly
+  through it instantly.  
+- Gesture mode + HUDs = a demo-ready wow factor for workshops and talks.
+  
+Getting started is literally `npm run dev`. Or just visit the live demo,
+press **I** for the Setup Guide, and drop your own JSON.  
+  
+Shout-out to the inspirations that sparked this direction:
+[soarxiv.org](https://soarxiv.org/), [Jarvis-CV](https://github.com/Suryansh777777/Jarvis-CV),
+and [@Sarthak](https://x.com/Sarthakhuh) for the “Neural Visualizer”
+concept.  
+  
+Repo & demo: https://github.com/ktwu01/neural-galaxy  
+ 
+Would love feedback—especially from folks exploring spatial interfaces for
+personal knowledge management. 🌌
 
 ---
 
@@ -61,16 +61,16 @@ demo-recording plan.
 
 ## YouTube Description (for a short demo clip)
 
-> Neural Galaxy turns months of AI conversations into a gesture-controlled
-> galaxy. Import your chat exports directly inside the browser (no backend,
-> no data leaves your laptop) and explore clusters with a GTA-style minimap.
->  
-> 🔹 Live demo & repo: https://github.com/ktwu01/neural-galaxy  
-> 🔹 Setup Guide shortcut: press `I` in the app  
-> 🔹 Screenshot shortcut: press `S` (3-second countdown)
->  
-> Credits: soarxiv, Jarvis-CV, and the Neural Visualizer concept by
-> @SarthakHuh for the inspiration.
+Neural Galaxy turns months of AI conversations into a gesture-controlled
+galaxy. Import your chat exports directly inside the browser (no backend,
+no data leaves your laptop) and explore clusters with a GTA-style minimap.
+ 
+🔹 Live demo & repo: https://github.com/ktwu01/neural-galaxy  
+🔹 Setup Guide shortcut: press `I` in the app  
+🔹 Screenshot shortcut: press `S` (3-second countdown)
+ 
+Credits: soarxiv, Jarvis-CV, and the Neural Visualizer concept by
+@SarthakHuh for the inspiration.
 
 ---
 

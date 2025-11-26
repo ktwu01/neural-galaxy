@@ -1,6 +1,8 @@
 # Neural Galaxy
 
-[![Neural Galaxy demo](docs/neural-galaxy-demo.gif)](docs/neural-galaxy-demo.gif)
+# [Live demo](https://ktwu01.github.io/neural-galaxy/)
+
+[![Neural Galaxy demo](docs/neural-galaxy-demo.gif)](https://ktwu01.github.io/neural-galaxy/)
 
 [![GitHub stars](https://img.shields.io/github/stars/ktwu01/neural-galaxy?style=social)](https://github.com/ktwu01/neural-galaxy/stargazers) [![GitHub forks](https://img.shields.io/github/forks/ktwu01/neural-galaxy?style=social)](https://github.com/ktwu01/neural-galaxy/fork) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/ktwu01/neural-galaxy/issues) ![License](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-informational.svg)
 
