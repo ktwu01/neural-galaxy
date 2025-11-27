@@ -1,5 +1,16 @@
 {
-  "name": "frontend",
+  "name": "neural-galaxy-frontend",
+  "description": "A 3D AI brand conversation visualization tool. Explore ChatGPT conversations and artificial intelligence concepts in a galaxy interface.",
+  "keywords": [
+    "AI",
+    "Artificial Intelligence",
+    "ChatGPT",
+    "Knowledge Base",
+    "Visualization",
+    "React",
+    "Three.js",
+    "Galaxy"
+  ],
   "private": true,
   "version": "0.0.0",
   "type": "module",

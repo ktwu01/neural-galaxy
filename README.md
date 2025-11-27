@@ -1,4 +1,4 @@
-# Neural Galaxy
+# Neural Galaxy - Your Personalized AI Conversation Visualization
 
 # [Live demo](https://ktwu01.github.io/neural-galaxy/)
 
@@ -6,12 +6,12 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/ktwu01/neural-galaxy?style=social)](https://github.com/ktwu01/neural-galaxy/stargazers) [![GitHub forks](https://img.shields.io/github/forks/ktwu01/neural-galaxy?style=social)](https://github.com/ktwu01/neural-galaxy/fork) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/ktwu01/neural-galaxy/issues) ![License](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-informational.svg)
 
-> A hand-controlled 3D map of your AI conversations—fly through every idea, screenshot your galaxy, and share the journey.
+> A hand-controlled 3D visualization of your **AI brand conversation base**. Fly through **ChatGPT** conversations, and explore **artificial intelligence** concepts.
 
 ## Highlights
 
-- **Instant Spacewalk** – Launch the Vite dev server, explore the built-in sample galaxy, and feel the bloom-heavy cyberpunk UI immediately.
-- **Setup Guide Wizard** – A guided import flow (shortcut `I`) explains how to upload ChatGPT exports and validates them in the browser.
+- **Instant Spacewalk** – Just inside your local browser, no need of any deployment, explore the built-in sample AI conversation, and feel the bloom-heavy cyberpunk UI immediately.
+- **Setup Guide Wizard** – A guided import flow (shortcut `I`) explains how to upload your own **ChatGPT** exports and validates them in the browser--All your data are kept locally, so you have no worry about data privacy concerns.
 - **Gesture + Keyboard Modes** – Switch between MediaPipe hand tracking and classic Orbit controls with one toggle; handy HUDs show what the system sees.
 - **Floating Utilities** – Single-click buttons provide keyboard help, full-UI screenshots (`S` shortcut with countdown), and direct access to the onboarding wizard.
 - **Python Data Builder** – Scripts in `/scripts` extract and preprocess your chats so you can regenerate `galaxy_data.json` offline with consistent colors and spacing.
