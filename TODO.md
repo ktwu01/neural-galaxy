@@ -1,14 +1,12 @@
 ## Critical
 
-demo video
-
-SEO
-
 ## Middle
 
-- [ ] As many of the users, they might have like 100 conversations, so this such low number might not be very suitable for creating a nebula or a galaxy. So how about   change our method of considering like ungroup our conversation instead we make a   large word galaxy instead of conversation galaxy. Like each word has its own   particle.
+- [ ] It seems that we have a demo video repository of different samples, different periods of the demo video. We can make them each into one GIF so that these samples can be useful To be uploaded in the README. And also in the "Readme" file, we can also insert the YouTube video.
 
 ## Small
+
+- [ ] As many of the users, they might have like 100 conversations, so this such low number might not be very suitable for creating a nebula or a galaxy. So how about change our method of considering like ungroup our conversation instead we make a large word galaxy instead of conversation galaxy. Like each word has its own particle.
 
 - [ ] 让cluster之间离得更远一些，现在的3倍. Different color clusters should be more separated spatially. We should have a control panel in a right to control this parameter.(... if it's easy.)
 
@@ -79,3 +77,5 @@ Oh what the fucking shit. It's definitely stupid retard to use emojis as icons. 
 - [x] 使用新的测试对话内容而非我自己的内容.
 
 - [x] Deploy to GitHub/Amazon. 如果数量超过fifty MB的话，需要by me coffee any amount
+
+- [x] demo video

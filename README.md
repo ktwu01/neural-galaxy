@@ -1,6 +1,6 @@
 # Neural Galaxy - Your Personalized AI Conversation Visualization
 
-# [Live demo](https://ktwu01.github.io/neural-galaxy/)
+# [Live demo](https://ktwu01.github.io/neural-galaxy/)- Supports all kinds of devices like Mac, Windows, iPhone, Android phone, and Tablets.
 
 [![Neural Galaxy demo](docs/neural-galaxy-demo.gif)](https://ktwu01.github.io/neural-galaxy/)
 
@@ -10,8 +10,8 @@
 
 ## Highlights
 
-- **Instant Spacewalk** – Just inside your local browser, no need of any deployment, explore the built-in sample AI conversation, and feel the bloom-heavy cyberpunk UI immediately.
-- **Setup Guide Wizard** – A guided import flow (shortcut `I`) explains how to upload your own **ChatGPT** exports and validates them in the browser--All your data are kept locally, so you have no worry about data privacy concerns.
+- **Instant Spacewalk** – **Zero deployment needed.** Simply open the [web app](https://ktwu01.github.io/neural-galaxy/) in your browser to explore the built-in sample conversation and experience the bloom-heavy cyberpunk UI immediately.
+- **Setup Guide Wizard** – A simple guided flow (shortcut: press `I`) helps you import your own **ChatGPT** history in seconds. **Your data stays 100% local**—processing happens entirely in your browser, ensuring complete privacy.
 - **Gesture + Keyboard Modes** – Switch between MediaPipe hand tracking and classic Orbit controls with one toggle; handy HUDs show what the system sees.
 - **Floating Utilities** – Single-click buttons provide keyboard help, full-UI screenshots (`S` shortcut with countdown), and direct access to the onboarding wizard.
 - **Python Data Builder** – Scripts in `/scripts` extract and preprocess your chats so you can regenerate `galaxy_data.json` offline with consistent colors and spacing.
