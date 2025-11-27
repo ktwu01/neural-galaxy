@@ -154,8 +154,12 @@ function App() {
     const setupComplete = localStorage.getItem('neuralGalaxy_setupComplete') === 'true';
     const skipSetup = localStorage.getItem('neuralGalaxy_skipSetup') === 'true';
 
+    // On first visit, automatically mark setup as complete with demo data
+    // Users can still access setup guide via Import button if they want to import their own data
     if (!setupComplete && !skipSetup) {
-      setShowSetupGuide(true);
+      localStorage.setItem('neuralGalaxy_setupComplete', 'true');
+      localStorage.setItem('neuralGalaxy_hasCustomData', 'false');
+      // Don't show setup guide - go straight to demo
     }
   }, []);
   useEffect(() => {
